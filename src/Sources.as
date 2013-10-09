@@ -1,9 +1,7 @@
-package
+package  
 {
-	public class Sources
-	{
-		public function Sources()
-		{
+	public class Sources 
+	{		
+		[Embed(source = '../assets/lamp1.png')] public static var ImgBackground:Class;
 		}
-	}
 }
