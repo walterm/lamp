@@ -12,6 +12,8 @@ package
 		public var rows:int = 30;
 		public var columns:int = 80;
 		public var ROW_PROBABILITY:Number = 0.25;
+		public var pause:Pause;
+		
 		
 		//private vars
 		private var darkness:FlxSprite;
@@ -130,15 +132,29 @@ package
 			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
 			add(light);
 //			add(darkness);
+			
+			pause = new Pause();
 		}
 		
 		override public function update():void 
 		{
-			super.update();
-			FlxG.collide(level, player);
-			if (FlxG.keys.COMMA)
+			if (!pause.showing)
 			{
-				FlxG.switchState(new EndScreen());
+				super.update();
+				FlxG.collide(level, player);
+				if (FlxG.keys.COMMA)
+				{
+					FlxG.switchState(new EndScreen());
+				}
+				if (FlxG.keys.P)
+				{
+					pause = new Pause;			
+					pause.showPaused();
+					add(pause);
+				}
+			} else
+			{
+				pause.update();
 			}
 			
 		}
