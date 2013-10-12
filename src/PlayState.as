@@ -4,6 +4,7 @@ package
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxTilemap;
+	import org.flixel.FlxText;
 
 	public class PlayState extends FlxState
 	{
@@ -17,11 +18,13 @@ package
 		public var ROW_PROB:Number = 0.25;
 		public var PLATFORM_PROB:Number = 0.75;
 		
-		public var BULB_COUNT:int = 5;
+		public const BULB_COUNT:int = 5;
+		public var bulbsCollected:int = 0;
 		
 		//private vars
 		private var darkness:FlxSprite;
 		private var bulbArray:Array;
+		private var bulbText:FlxText;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -131,21 +134,43 @@ package
 			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
 			darkness.blend = "multiply";
 			
+			// bulb stuff
+			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
+			bulbText.size = 20;
+			bulbText.alignment = "right";
+			add(bulbText);
+			
 			bulbArray = new Array();
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
-				bulb.x = Math.floor(Math.random()*(FlxG.width - 40) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 40) + 40);
+				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 			}
 			
+			
+			
+			// light
 			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
 			add(light);
 //			add(darkness);
 			
 			pause = new Pause();
+		}
+		
+		private function collideBulbs():void
+		{
+			for (var i:int = 0; i < bulbArray.length; i++){
+				var bulb:Bulb = bulbArray[i];
+				if (FlxG.collide(bulb, player)){
+					// collect it!
+					bulb.exists = false;
+					bulbsCollected += 1;
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
+				}
+			}
 		}
 		
 		override public function update():void 
@@ -154,6 +179,7 @@ package
 			{
 				super.update();
 				FlxG.collide(level, player);
+				collideBulbs();
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());

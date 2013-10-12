@@ -2,7 +2,7 @@ package {
 	/**
 	 * @author ethanis
 	 */
-	 import org.flixel.*;
+	import org.flixel.FlxSprite;
 	 
 	public class Bulb extends FlxSprite {
 		public var wasCollected:Boolean = false;
