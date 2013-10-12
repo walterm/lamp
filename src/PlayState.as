@@ -10,18 +10,19 @@ package
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
 		public var rows:int = 30;
-		public var columns:int = 40;
+		public var columns:int = 80;
+		public var ROW_PROBABILITY:Number = 0.25;
 		
 		//private vars
 		private var darkness:FlxSprite;
 		
-		private function pushPlatform(data:Array, platform:Array, columns:int):Array
+		private function pushPlatform(data:Array, platformLength:int, columns:int):Array
 		{
-			if(columns + 2 * platform.length  < rows){
-				for(var i:int = 0; i < platform.length; i++){
-					data.push(platform[i]);
+			if(columns + 2 * platformLength  < rows){
+				for(var i:int = 0; i < platformLength; i++){
+					data.push(1);
 				};
-				for(i = 0; i < platform.length; i++){
+				for(i = 0; i < platformLength; i++){
 					data.push(0);
 				};
 			}else{
@@ -32,38 +33,56 @@ package
 			return data;
 		}
 		
+		private function addBlankRow(data:Array):Array
+		{
+			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			for(var i:int = 0; i < rowData.length; i++){
+				data.push(rowData);
+			}
+			return data;
+		}
+		
 		override public function create():void
 		{
+			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
-			var rows:int = 30;
-			var columns:int = 40;
-			var threshold:Number = 0.5;
-			var platform3:Array = Array(1,1,1);
-			var platform4:Array = Array(1,1,1,1);
-			var platform5:Array = Array(1,1,1,1,1);
-			var platform6:Array = Array(1,1,1,1,1,1);
-			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			
+			//Top row
+			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 			//for every row
-			for(var j:int = 0; j < rows -1; j++){
-				for(var i:int = 0; i < columns; i++){
-					platformData.push(1);
-					//Get a number between 3 and 6 inclusive
-					var platNum:int = Math.random() * 4 + 3;
-					switch(platNum){
-						case 3:
-							platformData = pushPlatform(platformData, platform3, i);
-							break;
-						case 4:
-							platformData = pushPlatform(platformData, platform4, i);
-							break;
-						case 5:
-							platformData = pushPlatform(platformData, platform5, i);
-							break;
-						case 6:
-							platformData = pushPlatform(platformData, platform6, i);
-							break;
-					}	
+			for(var j:int = 0; j < rows - 2; j++){
+				//Determine if we will place a row or not.
+				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
+			
+				
+				if(willPlaceRow){
+					//for all the columns
+					for(var i:int = 0; i < columns; i++){
+						//Get a number between 3 and 6 inclusive
+						var platNum:int = Math.random() * 8 + 3;
+						switch(platNum){
+							case 3:
+								platformData = pushPlatform(platformData, 3, i);
+								break;
+							case 4:
+								platformData = pushPlatform(platformData, 4, i);
+								break;
+							case 5:
+								platformData = pushPlatform(platformData, 5, i);
+								break;
+							case 6:
+								platformData = pushPlatform(platformData, 6, i);
+								break;
+							case 7:
+								platformData = pushPlatform(platformData, 7, i);
+								break;
+						}	
+					}
 				}
+				else platformData = addBlankRow(platformData);
 			}
 			
 			
@@ -90,9 +109,9 @@ package
 //			}
 			
 
-
+			//Loading in the tilemap
 			level = new FlxTilemap();
-			level.loadMap(FlxTilemap.arrayToCSV(platformData,40), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
+			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
 			
 			
