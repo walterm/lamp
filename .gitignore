@@ -12,3 +12,7 @@ bin-release/
 
 # mac os evil
 .DS_Store
+
+# Ethan's editor is special :(
+src/org/
+.project
