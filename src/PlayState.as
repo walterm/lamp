@@ -10,16 +10,17 @@ package
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
 		public var rows:int = 30;
-		public var columns:int = 40;
-		public var ROW_PROBABILITY:Number = 0.60;
+		public var columns:int = 80;
+		public var ROW_PROBABILITY:Number = 0.25;
 		
-		private function pushPlatform(data:Array, platform:Array, columns:int):Array
+		
+		private function pushPlatform(data:Array, platformLength:int, columns:int):Array
 		{
-			if(columns + 2 * platform.length  < rows){
-				for(var i:int = 0; i < platform.length; i++){
-					data.push(platform[i]);
+			if(columns + 2 * platformLength  < rows){
+				for(var i:int = 0; i < platformLength; i++){
+					data.push(1);
 				};
-				for(i = 0; i < platform.length; i++){
+				for(i = 0; i < platformLength; i++){
 					data.push(0);
 				};
 			}else{
@@ -32,7 +33,8 @@ package
 		
 		private function addBlankRow(data:Array):Array
 		{
-			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 			for(var i:int = 0; i < rowData.length; i++){
 				data.push(rowData);
 			}
@@ -43,39 +45,37 @@ package
 		{
 			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
-			var rows:int = 30;
-			var columns:int = 40;
-			var threshold:Number = 0.5;
-			var platform3:Array = new Array(1,1,1);
-			var platform4:Array = new Array(1,1,1,1);
-			var platform5:Array = new Array(1,1,1,1,1);
-			var platform6:Array = new Array(1,1,1,1,1,1);
-			var emptyPlatform:Array = new Array(0,0,0,0,0);
-			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			
+			//Top row
+			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 			//for every row
-			for(var j:int = 0; j < rows - 1; j++){
+			for(var j:int = 0; j < rows - 2; j++){
+				//Determine if we will place a row or not.
 				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
+			
 				
 				if(willPlaceRow){
+					//for all the columns
 					for(var i:int = 0; i < columns; i++){
-						platformData.push(1);
 						//Get a number between 3 and 6 inclusive
-						var platNum:int = Math.random() * 7 + 3;
+						var platNum:int = Math.random() * 8 + 3;
 						switch(platNum){
 							case 3:
-								platformData = pushPlatform(platformData, platform3, i);
+								platformData = pushPlatform(platformData, 3, i);
 								break;
 							case 4:
-								platformData = pushPlatform(platformData, platform4, i);
+								platformData = pushPlatform(platformData, 4, i);
 								break;
 							case 5:
-								platformData = pushPlatform(platformData, platform5, i);
+								platformData = pushPlatform(platformData, 5, i);
 								break;
 							case 6:
-								platformData = pushPlatform(platformData, platform6, i);
+								platformData = pushPlatform(platformData, 6, i);
 								break;
-							default:
-								platformData = pushPlatform(platformData, emptyPlatform, i);
+							case 7:
+								platformData = pushPlatform(platformData, 7, i);
 								break;
 						}	
 					}
@@ -83,40 +83,9 @@ package
 				else platformData = addBlankRow(platformData);
 			}
 			
-			var lastRow:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-			
-			for(var n:int = 0; n < lastRow.length; n++){
-				platformData.push(lastRow[n]);
-			}
-			
-			
-			
-// ATTEMPT # 1
-//			//for every row
-//			for(var i:int = 0; i < rows - 1; i++){
-//				//attach a 1 to make sure we have an end border
-//				platformData.push(1);
-//				//for each column excluding the last one
-//				for(var j:int = 0; j < columns; j++){
-//					//generate some random number
-//					var num:Number = Math.random();
-//					//if it's above some threshold
-//					if(num > 0.5){
-//						//place a tile there
-//						platformData.push(1);
-//						threshold += 0.35;
-//						
-//					}else platformData.push(0);
-//				
-//				}
-//				//place a 1 for the rightmost edge
-//				platformData.push(1);
-//			}
-			
-
-
+			//Loading in the tilemap
 			level = new FlxTilemap();
-			level.loadMap(FlxTilemap.arrayToCSV(platformData,40), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
+			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
 		}
 	}
