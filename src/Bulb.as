@@ -11,7 +11,9 @@ package {
 		
 		public function Bulb():void
 		{
-			loadGraphic(Sources.ImgBulb, false, true, 20, 20);
+			loadGraphic(Sources.ImgBulb, true, false, 20, 20);
+			addAnimation("glow", [0,3,1,0], 5, true);
+			play("glow");
 			//set animations here
 			
 		}
