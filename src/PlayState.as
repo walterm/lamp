@@ -9,29 +9,28 @@ package
 	{
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
-		public var rows:int = 30;
+		public var rows:int = 50;
 		public var columns:int = 80;
+<<<<<<< HEAD
 		public var ROW_PROBABILITY:Number = 0.25;
 		public var pause:Pause;
 		
+=======
+		public var ROW_PROB:Number = 0.25;
+		public var PLATFORM_PROB:Number = 0.75;
+>>>>>>> 2983aefc77fd15e57fa85a16004fe5ffdfa37f34
 		
 		//private vars
 		private var darkness:FlxSprite;
 		
-		private function pushPlatform(data:Array, platformLength:int, columns:int):Array
+		private function pushPlatform(data:Array, platformLength:int):Array
 		{
-			if(columns + 2 * platformLength  < rows){
-				for(var i:int = 0; i < platformLength; i++){
-					data.push(1);
-				};
-				for(i = 0; i < platformLength; i++){
-					data.push(0);
-				};
-			}else{
-				for(var n:int = columns; n < rows; n++){
-					data.push(0);
-				}
-			}
+			for(var i:int = 0; i < platformLength; i++){
+				data.push(1);
+			};
+			for(i = 0; i < platformLength; i++){
+				data.push(0);
+			};
 			return data;
 		}
 		
@@ -54,37 +53,40 @@ package
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-			//for every row
-			for(var j:int = 0; j < rows - 2; j++){
-				//Determine if we will place a row or not.
-				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
 			
-				
-				if(willPlaceRow){
-					//for all the columns
-					for(var i:int = 0; i < columns; i++){
-						//Get a number between 3 and 6 inclusive
-						var platNum:int = Math.random() * 8 + 3;
-						switch(platNum){
-							case 3:
-								platformData = pushPlatform(platformData, 3, i);
-								break;
-							case 4:
-								platformData = pushPlatform(platformData, 4, i);
-								break;
-							case 5:
-								platformData = pushPlatform(platformData, 5, i);
-								break;
-							case 6:
-								platformData = pushPlatform(platformData, 6, i);
-								break;
-							case 7:
-								platformData = pushPlatform(platformData, 7, i);
-								break;
-						}	
-					}
+			var totalCells:int = rows * columns;
+			for(var n:int = 0; n < totalCells; n++){
+				if(n % columns == 0 || n % columns == (columns - 1))
+					platformData.push(1);
+				else {
+						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+						if(willPlacePlatform){
+							var platNum:int = Math.floor(Math.random() * 4 + 3);
+							switch(platNum){
+								case 3:
+									platformData = pushPlatform(platformData, 3);
+									break;
+								case 4:
+									platformData = pushPlatform(platformData, 4);
+									break;
+								case 5:
+									platformData = pushPlatform(platformData, 5);
+									break;
+								case 6:
+									platformData = pushPlatform(platformData, 6);
+									break;
+								case 7:
+									platformData = pushPlatform(platformData, 7);
+									break;
+							}
+							n = platformData.length;
+						}
+					
 				}
-				else platformData = addBlankRow(platformData);
+			}
+			
+			for(n= 0; n < 80; n++){
+				platformData.push(1);
 			}
 			
 			
