@@ -11,14 +11,11 @@ package
 		public var player:FlxSprite;
 		public var rows:int = 50;
 		public var columns:int = 80;
-<<<<<<< HEAD
 		public var ROW_PROBABILITY:Number = 0.25;
 		public var pause:Pause;
 		
-=======
 		public var ROW_PROB:Number = 0.25;
 		public var PLATFORM_PROB:Number = 0.75;
->>>>>>> 2983aefc77fd15e57fa85a16004fe5ffdfa37f34
 		
 		//private vars
 		private var darkness:FlxSprite;
