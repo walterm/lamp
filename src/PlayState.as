@@ -17,8 +17,11 @@ package
 		public var ROW_PROB:Number = 0.25;
 		public var PLATFORM_PROB:Number = 0.75;
 		
+		public var BULB_COUNT:int = 5;
+		
 		//private vars
 		private var darkness:FlxSprite;
+		private var bulbArray:Array;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -127,6 +130,16 @@ package
 			darkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
 			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
 			darkness.blend = "multiply";
+			
+			bulbArray = new Array();
+			for (var i:int = 0; i < BULB_COUNT; i++){
+				var bulb:Bulb = new Bulb();
+				// should not hard code width
+				bulb.x = Math.floor(Math.random() * 620 + 20);
+				bulb.y = Math.floor(Math.random()* 480 + 20);
+				bulbArray.push(bulb);
+				add(bulb);
+			}
 			
 			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
 			add(light);
