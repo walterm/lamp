@@ -11,7 +11,7 @@ package
 			t.size = 20;
 			t.alignment = "left";
 			add(t);
-			t = new FlxText(60, FlxG.height/2-40, FlxG.width, "Press space to start")
+			t = new FlxText(60, FlxG.height/2-40, FlxG.width, "Press enter to start")
 			
 			t.size = 10;
 			t.alignment = "left";
@@ -23,7 +23,7 @@ package
 		{
 			super.update();
 			
-			if (FlxG.keys.SPACE) {
+			if (FlxG.keys.ENTER) {
 				FlxG.switchState(new PlayState());
 			}
 		}
