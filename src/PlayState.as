@@ -136,6 +136,11 @@ package
 		{
 			super.update();
 			FlxG.collide(level, player);
+			if (FlxG.keys.COMMA)
+			{
+				FlxG.switchState(new EndScreen());
+			}
+			
 		}
 		
 		override public function draw():void {
