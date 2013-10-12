@@ -11,7 +11,7 @@ package
 		
 		public function Player():void
 		{
-			loadGraphic(Lamp, true, true, 14, 15);
+			loadGraphic(Sources.ImgPlayer, true, true, 14, 15);
 			//set animations here
 			
 			acceleration.y = 600; 
@@ -28,13 +28,12 @@ package
 			camTar.y = camY;
 			
 			super.update();
-			
-			
+
 		}
 		
 		private function movement():void
 		{
-			
+			velocity.x = 0; 
 			if (FlxG.keys.SPACE) {
 				if (touching & DOWN) {
 					velocity.y = jumpHeight;
@@ -43,15 +42,26 @@ package
 				} 
 			} 
 			if (FlxG.keys.A || FlxG.keys.LEFT){
-				velocity.x = -150
+				
+				velocity.x = 75;
+				facing = RIGHT; 
+				if (x > FlxG.width - width) 
+				{
+					velocity.x = 0; 
+				}				
 				//add walk animation here
 				
 			} else if (FlxG.keys.D || FlxG.keys.RIGHT){
-				velocity.x = 150
+				velocity.x = -75;
+				facing = LEFT; 
+				if (x < 0) 
+				{
+					velocity.x = 0; 
+				}
 				//add walk animation here
 			}
 			
-			
+			super.update();
 			
 		}
 	}
