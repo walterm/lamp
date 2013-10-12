@@ -11,7 +11,7 @@ package
 		public var player:FlxSprite;
 		public var rows:int = 30;
 		public var columns:int = 40;
-		public var ROW_PROBABILITY:Number = 0.75;
+		public var ROW_PROBABILITY:Number = 0.60;
 		
 		private function pushPlatform(data:Array, platform:Array, columns:int):Array
 		{
@@ -50,16 +50,17 @@ package
 			var platform4:Array = new Array(1,1,1,1);
 			var platform5:Array = new Array(1,1,1,1,1);
 			var platform6:Array = new Array(1,1,1,1,1,1);
+			var emptyPlatform:Array = new Array(0,0,0,0,0);
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			//for every row
-			for(var j:int = 0; j < rows -1; j++){
+			for(var j:int = 0; j < rows - 1; j++){
 				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
 				
 				if(willPlaceRow){
 					for(var i:int = 0; i < columns; i++){
 						platformData.push(1);
 						//Get a number between 3 and 6 inclusive
-						var platNum:int = Math.random() * 6 + 3;
+						var platNum:int = Math.random() * 7 + 3;
 						switch(platNum){
 							case 3:
 								platformData = pushPlatform(platformData, platform3, i);
@@ -73,10 +74,19 @@ package
 							case 6:
 								platformData = pushPlatform(platformData, platform6, i);
 								break;
+							default:
+								platformData = pushPlatform(platformData, emptyPlatform, i);
+								break;
 						}	
 					}
 				}
 				else platformData = addBlankRow(platformData);
+			}
+			
+			var lastRow:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			
+			for(var n:int = 0; n < lastRow.length; n++){
+				platformData.push(lastRow[n]);
 			}
 			
 			
