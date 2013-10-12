@@ -11,6 +11,7 @@ package
 		public var player:FlxSprite;
 		public var rows:int = 30;
 		public var columns:int = 40;
+		public var ROW_PROBABILITY:Number = 0.75;
 		
 		private function pushPlatform(data:Array, platform:Array, columns:int):Array
 		{
@@ -29,38 +30,53 @@ package
 			return data;
 		}
 		
+		private function addBlankRow(data:Array):Array
+		{
+			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			for(var i:int = 0; i < rowData.length; i++){
+				data.push(rowData);
+			}
+			return data;
+		}
+		
 		override public function create():void
 		{
+			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
 			var rows:int = 30;
 			var columns:int = 40;
 			var threshold:Number = 0.5;
-			var platform3:Array = Array(1,1,1);
-			var platform4:Array = Array(1,1,1,1);
-			var platform5:Array = Array(1,1,1,1,1);
-			var platform6:Array = Array(1,1,1,1,1,1);
+			var platform3:Array = new Array(1,1,1);
+			var platform4:Array = new Array(1,1,1,1);
+			var platform5:Array = new Array(1,1,1,1,1);
+			var platform6:Array = new Array(1,1,1,1,1,1);
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			//for every row
 			for(var j:int = 0; j < rows -1; j++){
-				for(var i:int = 0; i < columns; i++){
-					platformData.push(1);
-					//Get a number between 3 and 6 inclusive
-					var platNum:int = Math.random() * 4 + 3;
-					switch(platNum){
-						case 3:
-							platformData = pushPlatform(platformData, platform3, i);
-							break;
-						case 4:
-							platformData = pushPlatform(platformData, platform4, i);
-							break;
-						case 5:
-							platformData = pushPlatform(platformData, platform5, i);
-							break;
-						case 6:
-							platformData = pushPlatform(platformData, platform6, i);
-							break;
-					}	
+				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
+				
+				if(willPlaceRow){
+					for(var i:int = 0; i < columns; i++){
+						platformData.push(1);
+						//Get a number between 3 and 6 inclusive
+						var platNum:int = Math.random() * 6 + 3;
+						switch(platNum){
+							case 3:
+								platformData = pushPlatform(platformData, platform3, i);
+								break;
+							case 4:
+								platformData = pushPlatform(platformData, platform4, i);
+								break;
+							case 5:
+								platformData = pushPlatform(platformData, platform5, i);
+								break;
+							case 6:
+								platformData = pushPlatform(platformData, platform6, i);
+								break;
+						}	
+					}
 				}
+				else platformData = addBlankRow(platformData);
 			}
 			
 			
