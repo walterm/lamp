@@ -12,6 +12,9 @@ package
 		public var rows:int = 30;
 		public var columns:int = 40;
 		
+		//private vars
+		private var darkness:FlxSprite;
+		
 		private function pushPlatform(data:Array, platform:Array, columns:int):Array
 		{
 			if(columns + 2 * platform.length  < rows){
@@ -64,7 +67,6 @@ package
 			}
 			
 			
-			
 // ATTEMPT # 1
 //			//for every row
 //			for(var i:int = 0; i < rows - 1; i++){
@@ -92,6 +94,34 @@ package
 			level = new FlxTilemap();
 			level.loadMap(FlxTilemap.arrayToCSV(platformData,40), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
+			
+			
+			player = new Player(); 
+			player.x = FlxG.width / 2; 
+			player.y = FlxG.height - 31; 
+			
+			add(player);
+			
+			//add the darkness last bc we want it to be the top layer 
+			darkness = new FlxSprite(0,0);
+			darkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
+			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
+			darkness.blend = "multiply";
+			
+			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
+			add(light);
+//			add(darkness);
+		}
+		
+		override public function update():void 
+		{
+			super.update();
+			FlxG.collide(level, player);
+		}
+		
+		override public function draw():void {
+			darkness.fill(0xff000000);
+			super.draw();
 		}
 	}
 }
