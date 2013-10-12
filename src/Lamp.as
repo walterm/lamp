@@ -7,7 +7,7 @@ package
 	{
 		public function Lamp()
 		{
-			super(640,480,PlayState,2);
+			super(640,480,StartScreen,2);
 		}
 	}
 }
