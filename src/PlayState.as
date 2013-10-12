@@ -9,28 +9,24 @@ package
 	{
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
-		public var rows:int = 30;
+		public var rows:int = 50;
 		public var columns:int = 80;
-		public var ROW_PROBABILITY:Number = 0.25;
+		public var ROW_PROB:Number = 0.25;
+		public var PLATFORM_PROB:Number = 0.75;
+		public var lightPlayer:Light;
 		
 		//private vars
 		private var darkness:FlxSprite;
 		private var maptest:FlxTilemap;
 		
-		private function pushPlatform(data:Array, platformLength:int, columns:int):Array
+		private function pushPlatform(data:Array, platformLength:int):Array
 		{
-			if(columns + 2 * platformLength  < rows){
-				for(var i:int = 0; i < platformLength; i++){
-					data.push(1);
-				};
-				for(i = 0; i < platformLength; i++){
-					data.push(0);
-				};
-			}else{
-				for(var n:int = columns; n < rows; n++){
-					data.push(0);
-				}
-			}
+			for(var i:int = 0; i < platformLength; i++){
+				data.push(1);
+			};
+			for(i = 0; i < platformLength; i++){
+				data.push(0);
+			};
 			return data;
 		}
 		
@@ -53,79 +49,45 @@ package
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-			//for every row
-			for(var j:int = 0; j < rows - 2; j++){
-				//Determine if we will place a row or not.
-				var willPlaceRow:Boolean = Math.random() > ROW_PROBABILITY;
 			
-				
-				if(willPlaceRow){
-					//for all the columns
-					for(var i:int = 0; i < columns; i++){
-						//Get a number between 3 and 6 inclusive
-						var platNum:int = Math.random() * 8 + 3;
-						switch(platNum){
-							case 3:
-								platformData = pushPlatform(platformData, 3, i);
-								break;
-							case 4:
-								platformData = pushPlatform(platformData, 4, i);
-								break;
-							case 5:
-								platformData = pushPlatform(platformData, 5, i);
-								break;
-							case 6:
-								platformData = pushPlatform(platformData, 6, i);
-								break;
-							case 7:
-								platformData = pushPlatform(platformData, 7, i);
-								break;
-						}	
-					}
+			var totalCells:int = rows * columns;
+			for(var n:int = 0; n < totalCells; n++){
+				if(n % columns == 0 || n % columns == (columns - 1))
+					platformData.push(1);
+				else {
+						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+						if(willPlacePlatform){
+							var platNum:int = Math.floor(Math.random() * 4 + 3);
+							switch(platNum){
+								case 3:
+									platformData = pushPlatform(platformData, 3);
+									break;
+								case 4:
+									platformData = pushPlatform(platformData, 4);
+									break;
+								case 5:
+									platformData = pushPlatform(platformData, 5);
+									break;
+								case 6:
+									platformData = pushPlatform(platformData, 6);
+									break;
+								case 7:
+									platformData = pushPlatform(platformData, 7);
+									break;
+							}
+							n = platformData.length;
+						}
+					
 				}
-				else platformData = addBlankRow(platformData);
+			}
+			
+			for(n= 0; n < 80; n++){
+				platformData.push(1);
 			}
 			
 			//Loading in the tilemap
-//			level = new FlxTilemap();
-//			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
-//			add(level);
-			
-			var data:Array = new Array(
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
-				1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-				1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-				1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-			); 
-			
 			level = new FlxTilemap();
-			level.loadMap(FlxTilemap.arrayToCSV(data,40), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
+			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
 			
 			player = new Player(); 
@@ -140,15 +102,23 @@ package
 			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
 			darkness.blend = "multiply";
 			
-			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
-			add(light);
-//			add(darkness);
+			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
+			lightPlayer.scale.x = 2;
+			lightPlayer.scale.y = 2; 
+			add(lightPlayer);
+			add(darkness);
 		}
 		
 		override public function update():void 
 		{
 			super.update();
 			FlxG.collide(level, player);
+			if (FlxG.keys.COMMA)
+			{
+				FlxG.switchState(new EndScreen());
+			}
+			
+			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
 		}
 		
 		override public function draw():void {

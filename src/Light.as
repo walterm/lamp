@@ -27,7 +27,7 @@ package
 			
 		}
 		
-		private function follow(newX:Number, newY:Number):void
+		public function follow(newX:Number, newY:Number):void
 		{	
 			x = newX; 
 			y = newY; 
