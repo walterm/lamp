@@ -45,11 +45,15 @@ package
 			
 			//Top row
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			
+			for(var i:int = 0; i < columns * 2; i++){
+				platformData.push(0);
+			}
+			
 			
 			var totalCells:int = rows * columns;
-			for(var n:int = 0; n < totalCells; n++){
+			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
 				if(n % columns == 0 || n % columns == (columns - 1))
 					platformData.push(1);
 				else {
@@ -59,21 +63,26 @@ package
 							switch(platNum){
 								case 3:
 									platformData = pushPlatform(platformData, 3);
+									n = platformData.length;
 									break;
 								case 4:
 									platformData = pushPlatform(platformData, 4);
+									n = platformData.length;
 									break;
 								case 5:
 									platformData = pushPlatform(platformData, 5);
+									n = platformData.length;
 									break;
 								case 6:
 									platformData = pushPlatform(platformData, 6);
+									n = platformData.length;
 									break;
 								case 7:
 									platformData = pushPlatform(platformData, 7);
+									n = platformData.length;
 									break;
 							}
-							n = platformData.length;
+							
 						}
 					
 				}
@@ -83,30 +92,7 @@ package
 				platformData.push(1);
 			}
 			
-			
-// ATTEMPT # 1
-//			//for every row
-//			for(var i:int = 0; i < rows - 1; i++){
-//				//attach a 1 to make sure we have an end border
-//				platformData.push(1);
-//				//for each column excluding the last one
-//				for(var j:int = 0; j < columns; j++){
-//					//generate some random number
-//					var num:Number = Math.random();
-//					//if it's above some threshold
-//					if(num > 0.5){
-//						//place a tile there
-//						platformData.push(1);
-//						threshold += 0.35;
-//						
-//					}else platformData.push(0);
-//				
-//				}
-//				//place a 1 for the rightmost edge
-//				platformData.push(1);
-//			}
-			
-
+		
 			//Loading in the tilemap
 			level = new FlxTilemap();
 			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
