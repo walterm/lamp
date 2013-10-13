@@ -3,6 +3,7 @@ package
 	import org.flixel.FlxG;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
+	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap;
 
 	public class PlayState extends FlxState
@@ -11,11 +12,22 @@ package
 		public var player:FlxSprite;
 		public var rows:int = 50;
 		public var columns:int = 80;
-		public var ROW_PROB:Number = 0.25;
-		public var PLATFORM_PROB:Number = 0.75;
+		public var ROW_PROBABILITY:Number = 0.1;
+		public var pause:Pause;
+		
+		public var ROW_PROB:Number = 0.1;
+		public var PLATFORM_PROB:Number = 0.2;
+		public var lightPlayer:Light;
+		
+		public const BULB_COUNT:int = 5;
+		public var bulbsCollected:int = 0;
 		
 		//private vars
 		private var darkness:FlxSprite;
+		private var bulbArray:Array;
+		private var bulbLightArray:Array;
+		private var bulbText:FlxText;
+		private var debug:Boolean = false;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -40,82 +52,77 @@ package
 		
 		override public function create():void
 		{
+			
+			FlxG.playMusic(Sources.BackgroundMusic, 1);
+			
 			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
 			
 			//Top row
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			
+//			for(var i:int = 0; i < columns * 2; i++){
+//				platformData.push(0);
+//			}
+//			
+//			
 			var totalCells:int = rows * columns;
-			for(var n:int = 0; n < totalCells; n++){
-				if(n % columns == 0 || n % columns == (columns - 1))
-					platformData.push(1);
-				else {
-						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-						if(willPlacePlatform){
-							var platNum:int = Math.floor(Math.random() * 4 + 3);
-							switch(platNum){
-								case 3:
-									platformData = pushPlatform(platformData, 3);
-									break;
-								case 4:
-									platformData = pushPlatform(platformData, 4);
-									break;
-								case 5:
-									platformData = pushPlatform(platformData, 5);
-									break;
-								case 6:
-									platformData = pushPlatform(platformData, 6);
-									break;
-								case 7:
-									platformData = pushPlatform(platformData, 7);
-									break;
-							}
-							n = platformData.length;
-						}
-					
-				}
-			}
-			
-			for(n= 0; n < 80; n++){
-				platformData.push(1);
-			}
-			
-			
-// ATTEMPT # 1
-//			//for every row
-//			for(var i:int = 0; i < rows - 1; i++){
-//				//attach a 1 to make sure we have an end border
-//				platformData.push(1);
-//				//for each column excluding the last one
-//				for(var j:int = 0; j < columns; j++){
-//					//generate some random number
-//					var num:Number = Math.random();
-//					//if it's above some threshold
-//					if(num > 0.5){
-//						//place a tile there
-//						platformData.push(1);
-//						threshold += 0.35;
-//						
-//					}else platformData.push(0);
-//				
+//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
+//				if(n % columns == 0 || n % columns == (columns - 1))
+//					platformData.push(1);
+//				else {
+//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+//						if(willPlacePlatform){
+//							var platNum:int = Math.floor(Math.random() * 4 + 3);
+//							switch(platNum){
+//								case 3:
+//									platformData = pushPlatform(platformData, 3);
+//									n = platformData.length;
+//									break;
+//								case 4:
+//									platformData = pushPlatform(platformData, 4);
+//									n = platformData.length;
+//									break;
+//								case 5:
+//									platformData = pushPlatform(platformData, 5);
+//									n = platformData.length;
+//									break;
+//								case 6:
+//									platformData = pushPlatform(platformData, 6);
+//									n = platformData.length;
+//									break;
+//								case 7:
+//									platformData = pushPlatform(platformData, 7);
+//									n = platformData.length;
+//									break;
+//							}
+//							
+//						}
+//					
 //				}
-//				//place a 1 for the rightmost edge
+//			}
+//			
+//			for(n= 0; n < 80; n++){
 //				platformData.push(1);
 //			}
 			
-
+			for(var n:int = 0; n < totalCells - columns * 3; n++){
+				platformData.push(0);
+			}
+			
+			for(n = platformData.length; n < totalCells; n++){
+				platformData.push(1);
+			}
+			
 			//Loading in the tilemap
 			level = new FlxTilemap();
 			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
 			
-			
 			player = new Player(); 
-			player.x = FlxG.width / 2; 
-			player.y = FlxG.height - 31; 
+			player.x = FlxG.width / 2.0; 
+			player.y = FlxG.height / 2.0; 
 			
 			add(player);
 			
@@ -125,20 +132,77 @@ package
 			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
 			darkness.blend = "multiply";
 			
-			var light:Light = new Light(FlxG.width / 2, FlxG.height / 2, darkness);
-			add(light);
-//			add(darkness);
+			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
+			lightPlayer.scale.x = 2;
+			lightPlayer.scale.y = 2; 
+			add(lightPlayer);
+	
+			// bulb stuff
+			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
+			bulbText.size = 20;
+			bulbText.alignment = "right";
+			add(bulbText);
+			
+			bulbArray = new Array();
+			bulbLightArray = new Array(); 
+			for (var i:int = 0; i < BULB_COUNT; i++){
+				var bulb:Bulb = new Bulb();
+				// should not hard code width
+				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
+				bulbArray.push(bulb);
+				add(bulb);
+				
+				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
+				bulbLightArray.push(bulbLight);
+				add(bulbLight); 
+			}
+			
+			if (!debug) 
+			{
+				add(darkness);
+			}
+						
+			pause = new Pause();
+		}
+		
+		private function collideBulbs():void
+		{
+			for (var i:int = 0; i < bulbArray.length; i++){
+				var bulb:Bulb = bulbArray[i];
+				if (FlxG.collide(bulb, player)){
+					// collect it!
+					bulb.exists = false;
+					bulbLightArray[i].exists = false;
+					bulbsCollected += 1;
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
+				}
+			}
 		}
 		
 		override public function update():void 
 		{
-			super.update();
-			FlxG.collide(level, player);
-			if (FlxG.keys.COMMA)
+			if (!pause.showing)
 			{
-				FlxG.switchState(new EndScreen());
+				super.update();
+				FlxG.collide(level, player);
+				collideBulbs();
+				if (FlxG.keys.COMMA)
+				{
+					FlxG.switchState(new EndScreen());
+				}
+				if (FlxG.keys.P)
+				{
+					pause = new Pause;			
+					pause.showPaused();
+					add(pause);
+				}
+			} else
+			{
+				pause.update();
 			}
 			
+			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
 		}
 		
 		override public function draw():void {
