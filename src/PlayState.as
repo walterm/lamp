@@ -26,7 +26,7 @@ package
 		private var darkness:FlxSprite;
 		private var bulbArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = false;
+		private var debug:Boolean = true;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
