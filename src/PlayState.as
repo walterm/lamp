@@ -25,8 +25,9 @@ package
 		//private vars
 		private var darkness:FlxSprite;
 		private var bulbArray:Array;
+		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = true;
+		private var debug:Boolean = false;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -135,11 +136,6 @@ package
 			lightPlayer.scale.x = 2;
 			lightPlayer.scale.y = 2; 
 			add(lightPlayer);
-			
-			if (!debug) 
-			{
-				add(darkness);
-			}
 	
 			// bulb stuff
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
@@ -148,6 +144,7 @@ package
 			add(bulbText);
 			
 			bulbArray = new Array();
+			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
@@ -155,6 +152,15 @@ package
 				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
+				
+				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
+				bulbLightArray.push(bulbLight);
+				add(bulbLight); 
+			}
+			
+			if (!debug) 
+			{
+				add(darkness);
 			}
 						
 			pause = new Pause();
@@ -167,6 +173,7 @@ package
 				if (FlxG.collide(bulb, player)){
 					// collect it!
 					bulb.exists = false;
+					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
 					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
 				}
