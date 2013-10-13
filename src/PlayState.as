@@ -59,41 +59,58 @@ package
 			
 			//Top row
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			
+//			for(var i:int = 0; i < columns * 2; i++){
+//				platformData.push(0);
+//			}
+//			
+//			
 			var totalCells:int = rows * columns;
-			for(var n:int = 0; n < totalCells; n++){
-				if(n % columns == 0 || n % columns == (columns - 1))
-					platformData.push(1);
-				else {
-						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-						if(willPlacePlatform){
-							var platNum:int = Math.floor(Math.random() * 4 + 3);
-							switch(platNum){
-								case 3:
-									platformData = pushPlatform(platformData, 3);
-									break;
-								case 4:
-									platformData = pushPlatform(platformData, 4);
-									break;
-								case 5:
-									platformData = pushPlatform(platformData, 5);
-									break;
-								case 6:
-									platformData = pushPlatform(platformData, 6);
-									break;
-								case 7:
-									platformData = pushPlatform(platformData, 7);
-									break;
-							}
-							n = platformData.length;
-						}
-					
-				}
+//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
+//				if(n % columns == 0 || n % columns == (columns - 1))
+//					platformData.push(1);
+//				else {
+//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+//						if(willPlacePlatform){
+//							var platNum:int = Math.floor(Math.random() * 4 + 3);
+//							switch(platNum){
+//								case 3:
+//									platformData = pushPlatform(platformData, 3);
+//									n = platformData.length;
+//									break;
+//								case 4:
+//									platformData = pushPlatform(platformData, 4);
+//									n = platformData.length;
+//									break;
+//								case 5:
+//									platformData = pushPlatform(platformData, 5);
+//									n = platformData.length;
+//									break;
+//								case 6:
+//									platformData = pushPlatform(platformData, 6);
+//									n = platformData.length;
+//									break;
+//								case 7:
+//									platformData = pushPlatform(platformData, 7);
+//									n = platformData.length;
+//									break;
+//							}
+//							
+//						}
+//					
+//				}
+//			}
+//			
+//			for(n= 0; n < 80; n++){
+//				platformData.push(1);
+//			}
+			
+			for(var n:int = 0; n < totalCells - columns * 3; n++){
+				platformData.push(0);
 			}
 			
-			for(n= 0; n < 80; n++){
+			for(n = platformData.length; n < totalCells; n++){
 				platformData.push(1);
 			}
 			
