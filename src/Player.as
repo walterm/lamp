@@ -11,7 +11,7 @@ package
 		
 		public function Player():void
 		{
-			loadGraphic(Sources.ImgPlayer, true, true, 14, 15);
+			loadGraphic(Sources.ImgPlayer, true, true, 80, 80);
 			//set animations here
 			
 			acceleration.y = 600; 
