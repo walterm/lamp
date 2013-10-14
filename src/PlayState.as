@@ -5,6 +5,7 @@ package
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap;
+	import org.flixel.FlxObject; 
 
 	public class PlayState extends FlxState
 	{
@@ -18,6 +19,7 @@ package
 		public var ROW_PROB:Number = 0.1;
 		public var PLATFORM_PROB:Number = 0.2;
 		public var lightPlayer:Light;
+		public var lightBeamPlayer:Light;
 		
 		public const BULB_COUNT:int = 5;
 		public var bulbsCollected:int = 0;
@@ -132,11 +134,19 @@ package
 			darkness.scrollFactor.x = darkness.scrollFactor.y = 0;
 			darkness.blend = "multiply";
 			
+			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 2;
 			lightPlayer.scale.y = 2; 
 			add(lightPlayer);
 	
+			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
+			//lightPlayer.scale.x = 2;
+			lightBeamPlayer.scale.y = 3; 
+			lightBeamPlayer.angle = 45; 
+			add(lightBeamPlayer);
+			lightBeamPlayer.visible = false; 
+			
 			// bulb stuff
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
@@ -171,11 +181,13 @@ package
 			for (var i:int = 0; i < bulbArray.length; i++){
 				var bulb:Bulb = bulbArray[i];
 				if (FlxG.collide(bulb, player)){
+					FlxG.play(Sources.BulbPickupSoundEffect, 0.25);
 					// collect it!
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
-					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");		
+					
 				}
 			}
 		}
@@ -187,6 +199,7 @@ package
 				super.update();
 				FlxG.collide(level, player);
 				collideBulbs();
+				checkLightBeam(); 
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -197,12 +210,36 @@ package
 					pause.showPaused();
 					add(pause);
 				}
+				
+				lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);	
+				
 			} else
 			{
 				pause.update();
 			}
+					
+		}
+		
+		private function checkLightBeam():void {
+			if (player.facing == FlxObject.RIGHT) 
+			{
+				lightBeamPlayer.angle = 45; 
+				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
+			}
+			else 
+			{
+				lightBeamPlayer.angle = 315; 
+				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
+			}
 			
-			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
+			if (FlxG.keys.E)
+			{
+				lightBeamPlayer.visible = true; 
+			}
+			else 
+			{
+				lightBeamPlayer.visible = false;
+			}
 		}
 		
 		override public function draw():void {
