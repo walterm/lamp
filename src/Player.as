@@ -16,10 +16,10 @@ package
 		{ 
 			loadGraphic(Sources.ImgPlayer, true, true, 80, 80);
 			
-			var lightbeam:FlxSprite;
-			lightbeam = new FlxSprite;
-			lightbeam.loadGraphic(Sources.ImgLightBeam, true, true, 80, 80); 
-			FlxG.state.add(lightbeam); 
+//			var lightbeam:FlxSprite;
+//			lightbeam = new FlxSprite;
+//			lightbeam.loadGraphic(Sources.ImgLightBeam, true, true, 80, 80); 
+//			FlxG.state.add(lightbeam); 
 			
 			//set animations here
 			addAnimation("idle"/*name of animation*/, [0]/*used frames*/);
@@ -41,16 +41,6 @@ package
 			camTar.y = camY;
 			
 			super.update();
-		}
-		
-		private function lightbeam():void
-		{
-			var lightOn:Boolean = ( FlxG.keys.E ); 
-			
-			if (lightOn)
-			{
-				
-			}
 		}
 		
 		private function movement():void

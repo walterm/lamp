@@ -29,7 +29,7 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = false;
+		private var debug:Boolean = true;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -140,12 +140,18 @@ package
 			lightPlayer.scale.y = 2; 
 			add(lightPlayer);
 	
+			//add light beam onto player, keep invisible until needed 
 			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
-			//lightPlayer.scale.x = 2;
 			lightBeamPlayer.scale.y = 3; 
 			lightBeamPlayer.angle = 45; 
 			add(lightBeamPlayer);
 			lightBeamPlayer.visible = false; 
+			
+			//test plants 
+			var planttest:Plant = new Plant(); 
+			planttest.x = FlxG.width/2.0;
+			planttest.y = FlxG.height/2.0;
+			add(planttest); 
 			
 			// bulb stuff
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
