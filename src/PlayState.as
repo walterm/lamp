@@ -180,6 +180,7 @@ package
 			}
 						
 			pause = new Pause();
+			
 		}
 		
 		private function collideBulbs():void
