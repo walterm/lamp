@@ -1,16 +1,17 @@
 package
 {
 	import org.flixel.FlxG;
+	import org.flixel.FlxObject;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
-	import org.flixel.FlxTilemap;
-	import org.flixel.FlxObject; 
+	import org.flixel.FlxTilemap; 
 
 	public class PlayState extends FlxState
 	{
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
+		public var plant:Plant;
 		public var rows:int = 50;
 		public var columns:int = 80;
 		public var ROW_PROBABILITY:Number = 0.1;
@@ -29,7 +30,7 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = false;
+		private var debug:Boolean = true;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -148,10 +149,10 @@ package
 			lightBeamPlayer.visible = false; 
 			
 			//test plants 
-			var planttest:Plant = new Plant(); 
-			planttest.x = FlxG.width/2.0;
-			planttest.y = FlxG.height/2.0;
-			add(planttest); 
+			plant = new Plant(); 
+			plant.x = FlxG.width/2.0 - 80;
+			plant.y = FlxG.height/2.0;
+			add(plant); 
 			
 			// bulb stuff
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
@@ -198,6 +199,24 @@ package
 			}
 		}
 		
+		private function treeClimb():void
+		{
+			if (FlxG.overlap(player, plant) && (FlxG.keys.UP ||  FlxG.keys.W)) 
+			{
+				player.velocity.y = -100;
+				player.acceleration.y = 0;
+			} else if (FlxG.overlap(player, plant) && (FlxG.keys.DOWN ||  FlxG.keys.S))
+			{
+				player.velocity.y = 100;
+				player.acceleration.y = 0;	
+			} else if (FlxG.overlap(player, plant)) {
+				player.velocity.y = 0
+				player.acceleration.y = 0;
+			} else {
+				player.acceleration.y = 600;
+			}
+		}
+		
 		override public function update():void 
 		{
 			if (!pause.showing)
@@ -205,7 +224,8 @@ package
 				super.update();
 				FlxG.collide(level, player);
 				collideBulbs();
-				checkLightBeam(); 
+				checkLightBeam();
+				treeClimb();
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
