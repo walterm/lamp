@@ -156,15 +156,6 @@ package
 			planttest.y = FlxG.height/2.0;
 			add(planttest);
 			
-			// battery stuff
-			batteryText = new FlxText(75, 20, 90, "100%");
-			batteryText.size = 20;
-			batteryText.alignment = "left";
-			add(batteryText);
-			
-			battery = new Battery();
-			add(battery);
-			
 			// bulb stuff
 			createBulbs();
 			
@@ -172,17 +163,19 @@ package
 			{
 				add(darkness);
 			}
+			
+			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
+			bulbText.size = 20;
+			bulbText.alignment = "right";
+			add(bulbText);
+			
+			createBattery();	
 						
 			pause = new Pause();
 		}
 		
 		private function createBulbs():void
-		{
-			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
-			bulbText.size = 20;
-			bulbText.alignment = "right";
-			add(bulbText);
-						
+		{						
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
@@ -204,6 +197,18 @@ package
 			}
 						
 			pause = new Pause();
+		}
+		
+		private function createBattery():void
+		{
+			// battery stuff
+			batteryText = new FlxText(75, 20, 90, "100%");
+			batteryText.size = 20;
+			batteryText.alignment = "left";
+			add(batteryText);
+			
+			battery = new Battery();
+			add(battery);
 		}
 		
 		private function collideBulbs():void
