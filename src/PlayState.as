@@ -29,7 +29,7 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = true;
+		private var debug:Boolean = false;
 		
 		private var block:FlxTileblock;
 		
@@ -91,6 +91,8 @@ package
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 3;
 			lightPlayer.scale.y = 3; 
+			lightPlayer.width *= lightPlayer.scale.x; 
+			lightPlayer.height *= lightPlayer.scale.y;
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
