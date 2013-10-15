@@ -32,7 +32,7 @@ package
 
 		private var battery:Battery;
 		private var batteryText:FlxText;
-		private var debug:Boolean = true;
+		private var debug:Boolean = false;
 
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -140,7 +140,7 @@ package
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2; 
+			lightPlayer.scale.y = 2;
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
@@ -226,9 +226,6 @@ package
 		private function updateBattery():void
 		{
 			batteryText.text = ""+Math.ceil(battery.batteryLife)+"%";
-			if (battery.batteryLife <= 0){
-				FlxG.switchState(new EndScreen());
-			}
 		}
 		
 		override public function update():void 
@@ -272,9 +269,10 @@ package
 				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
-			if (FlxG.keys.E)
+			if (FlxG.keys.E && battery.batteryLife > 0)
 			{
-				lightBeamPlayer.visible = true; 
+				lightBeamPlayer.visible = true;
+				lightBeamPlayer.alpha = battery.batteryLife / battery.maxBatteryLife;
 			}
 			else 
 			{
