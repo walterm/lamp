@@ -6,12 +6,16 @@ package
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap; 
+<<<<<<< HEAD
 	import org.flixel.FlxTileblock;
+=======
+>>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 
 	public class PlayState extends FlxState
 	{
 		public static var level:FlxTilemap;
 		public var player:FlxSprite;
+		public var plant:Plant;
 		public var rows:int = 50;
 		public var columns:int = 80;
 		public var pause:Pause;
@@ -30,9 +34,12 @@ package
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
 
+<<<<<<< HEAD
 		private var debug:Boolean = true;
 		
 		private var block:FlxTileblock;
+=======
+>>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 
 		private var battery:Battery;
 		private var batteryText:FlxText;
@@ -94,10 +101,15 @@ package
 			
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
+<<<<<<< HEAD
 			lightPlayer.scale.x = 3;
 			lightPlayer.scale.y = 3; 
 			lightPlayer.width *= lightPlayer.scale.x; 
 			lightPlayer.height *= lightPlayer.scale.y;
+=======
+			lightPlayer.scale.x = 2;
+			lightPlayer.scale.y = 2;
+>>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
@@ -108,19 +120,12 @@ package
 			lightBeamPlayer.visible = false; 
 			
 			//test plants 
-			var planttest:Plant = new Plant(); 
-			planttest.x = FlxG.width/2.0;
-			planttest.y = FlxG.height/2.0;
-			add(planttest);
-			
-			// battery stuff
-			batteryText = new FlxText(75, 20, 90, "100%");
-			batteryText.size = 20;
-			batteryText.alignment = "left";
-			add(batteryText);
-			
-			battery = new Battery();
-			add(battery);
+
+			plant = new Plant(); 
+			plant.x = FlxG.width/2.0 - 80;
+			plant.y = FlxG.height/2.0;
+			add(plant); 
+
 			
 			// bulb stuff
 			createBulbs();
@@ -129,24 +134,26 @@ package
 			{
 				add(darkness);
 			}
+			
+			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
+			bulbText.size = 20;
+			bulbText.alignment = "right";
+			add(bulbText);
+			
+			createBattery();	
 						
 			pause = new Pause();
 		}
 		
 		private function createBulbs():void
-		{
-			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
-			bulbText.size = 20;
-			bulbText.alignment = "right";
-			add(bulbText);
-						
+		{						
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
 				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 120) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 				
@@ -161,6 +168,18 @@ package
 			}
 						
 			pause = new Pause();
+		}
+		
+		private function createBattery():void
+		{
+			// battery stuff
+			batteryText = new FlxText(75, 20, 90, "100%");
+			batteryText.size = 20;
+			batteryText.alignment = "left";
+			add(batteryText);
+			
+			battery = new Battery();
+			add(battery);
 		}
 		
 		private function collideBulbs():void
@@ -180,12 +199,29 @@ package
 			}
 		}
 		
+
+		private function treeClimb():void
+		{
+			if (FlxG.overlap(player, plant) && (FlxG.keys.UP ||  FlxG.keys.W)) 
+			{
+				player.velocity.y = -100;
+				player.acceleration.y = 0;
+			} else if (FlxG.overlap(player, plant) && (FlxG.keys.DOWN ||  FlxG.keys.S))
+			{
+				player.velocity.y = 100;
+				player.acceleration.y = 0;	
+			} else if (FlxG.overlap(player, plant)) {
+				player.velocity.y = 0
+				player.acceleration.y = 0;
+			} else {
+				player.acceleration.y = 600;
+			}
+		}
+
 		private function updateBattery():void
 		{
 			batteryText.text = ""+Math.ceil(battery.batteryLife)+"%";
-			if (battery.batteryLife <= 0){
-				FlxG.switchState(new EndScreen());
-			}
+
 		}
 		
 		override public function update():void 
@@ -200,6 +236,7 @@ package
 				collideBulbs();
 
 				checkLightBeam(); 
+				treeClimb()
 				updateBattery();
 				if (FlxG.keys.COMMA)
 				{
@@ -239,12 +276,18 @@ package
 				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
+<<<<<<< HEAD
 			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
 			
 
 			if (FlxG.keys.E)
+=======
+			if (FlxG.keys.E && battery.batteryLife > 0)
+>>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 			{
-				lightBeamPlayer.visible = true; 
+				battery.drain();
+				lightBeamPlayer.visible = true;
+				lightBeamPlayer.alpha = battery.batteryLife / battery.maxBatteryLife;
 			}
 			else 
 			{

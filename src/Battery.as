@@ -9,7 +9,7 @@ package {
 		// once this drops to 0, you die		
 		public var batteryLife:Number = 100;
 		public const bulbBatteryRecovery:Number = 20;
-		public const batteryDrain:Number = 0.04; // amount drained every update.
+		public const batteryDrain:Number = 0.05; // amount drained every update.
 		
 		public function Battery():void {
 			this.x = 10;
@@ -19,15 +19,17 @@ package {
 		}
 		
 		override public function update(): void {
-			batteryLife -= batteryDrain;
-			if (batteryLife < 0){
-				// I cannot stand for the undead!
-				batteryLife = 0;
-			}
 			// critical juncture, animate!
 			var frameNo:uint = Math.max(0, Math.ceil(batteryLife/ 33));
 			frame = frameNo;
 			super.update();
+		}
+		
+		public function drain(): void {
+			batteryLife -= batteryDrain;
+			if (batteryLife < 0){
+				batteryLife = 0;
+			}
 		}
 		
 		public function recover(): void {
