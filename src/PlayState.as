@@ -182,7 +182,7 @@ package
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
 				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 120) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 				
