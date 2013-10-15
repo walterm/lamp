@@ -89,7 +89,7 @@ package
 			{
 
 				velocity.x = 75;
-				facing = LEFT; 
+				facing = RIGHT; 
 				if (x > FlxG.width - width) 
 				{
 					velocity.x = 0; 
@@ -107,7 +107,7 @@ package
 			if (left)
 			{
 				velocity.x = -75;
-				facing = RIGHT; 
+				facing = LEFT; 
 				if (x < 0) 
 				{
 					velocity.x = 0; 

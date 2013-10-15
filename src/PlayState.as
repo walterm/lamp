@@ -29,7 +29,7 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = true;
+		private var debug:Boolean = false;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -227,7 +227,7 @@ package
 		}
 		
 		private function checkLightBeam():void {
-			if (player.facing == FlxObject.RIGHT) 
+			if (player.facing == FlxObject.LEFT) 
 			{
 				lightBeamPlayer.angle = 45; 
 				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
