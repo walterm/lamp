@@ -6,10 +6,7 @@ package
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap; 
-<<<<<<< HEAD
 	import org.flixel.FlxTileblock;
-=======
->>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 
 	public class PlayState extends FlxState
 	{
@@ -34,13 +31,9 @@ package
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
 
-<<<<<<< HEAD
 		private var debug:Boolean = true;
 		
 		private var block:FlxTileblock;
-=======
->>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
-
 		private var battery:Battery;
 		private var batteryText:FlxText;
 
@@ -101,20 +94,18 @@ package
 			
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
-<<<<<<< HEAD
 			lightPlayer.scale.x = 3;
 			lightPlayer.scale.y = 3; 
 			lightPlayer.width *= lightPlayer.scale.x; 
 			lightPlayer.height *= lightPlayer.scale.y;
-=======
-			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2;
->>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
+
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
 			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
 			lightBeamPlayer.scale.y = 3; 
+			lightBeamPlayer.height *= 3;
+			lightBeamPlayer.centerOffsets();
 			lightBeamPlayer.angle = 45; 
 			add(lightBeamPlayer);
 			lightBeamPlayer.visible = false; 
@@ -211,7 +202,7 @@ package
 				player.velocity.y = 100;
 				player.acceleration.y = 0;	
 			} else if (FlxG.overlap(player, plant)) {
-				player.velocity.y = 0
+				player.velocity.y = 0;
 				player.acceleration.y = 0;
 			} else {
 				player.acceleration.y = 600;
@@ -236,7 +227,7 @@ package
 				collideBulbs();
 
 				checkLightBeam(); 
-				treeClimb()
+				treeClimb();
 				updateBattery();
 				if (FlxG.keys.COMMA)
 				{
@@ -276,14 +267,9 @@ package
 				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
-<<<<<<< HEAD
 			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
-			
 
-			if (FlxG.keys.E)
-=======
 			if (FlxG.keys.E && battery.batteryLife > 0)
->>>>>>> d7647293741deba05ea0cf164bb3d802450bcbd1
 			{
 				battery.drain();
 				lightBeamPlayer.visible = true;
