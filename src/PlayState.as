@@ -276,6 +276,7 @@ package
 			
 			if (FlxG.keys.E && battery.batteryLife > 0)
 			{
+				battery.drain();
 				lightBeamPlayer.visible = true;
 				lightBeamPlayer.alpha = battery.batteryLife / battery.maxBatteryLife;
 			}
