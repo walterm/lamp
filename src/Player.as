@@ -1,5 +1,7 @@
 package
 {
+	import PlayState;
+	
 	import org.flixel.FlxG;
 	import org.flixel.FlxObject;
 	import org.flixel.FlxSound;
@@ -36,6 +38,7 @@ package
 			camTar.x = x;
 			camTar.y = camY;
 			
+			
 		}
 		
 		override public function update():void
@@ -44,6 +47,7 @@ package
 			
 			camTar.x = x;
 			camTar.y = camY;
+			
 			
 			super.update();
 		}
@@ -64,24 +68,27 @@ package
 			
 			if (touching & DOWN)
 			{
+				
 				if (!left && !right) 
 				{
 					play('idle');
 				} else 
 				{
+					
+					
 					play('walk');
 					
 				}
 				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
+					velocity.y = -300;
 
 					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
 
 
 					velocity.y = yVelocity;
 
-				}
-			} else
+				} else
 			{
 				play('jump');
 			}
@@ -117,5 +124,4 @@ package
 			super.update();
 	
 		}
-	}
-}
+	}}}
