@@ -9,6 +9,7 @@ package
 	{
 		public var camTar:FlxObject;
 		public var walk:FlxSound = FlxG.play(Sources.LampWalkSoundEffect, 0.25, true);
+		public var beam:FlxSound = FlxG.play(Sources.LightBeamSoundEffect, 0.25, true);
 		
 		private var camY:int = 120;
 		private var jumpHeight:int = -200;
@@ -53,6 +54,13 @@ package
 			var right:Boolean = ( FlxG.keys.RIGHT || FlxG.keys.D ); 
 			var left:Boolean = (FlxG.keys.LEFT || FlxG.keys.A);
 			var up:Boolean = (FlxG.keys.UP || FlxG.keys.W);
+			
+			if (FlxG.keys.E){
+				beam.play();
+			} else
+			{
+				beam.stop();
+			}
 			
 			if (touching & DOWN)
 			{
