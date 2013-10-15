@@ -156,7 +156,7 @@ package
 			add(planttest);
 			
 			// battery stuff
-			batteryText = new FlxText(80, 20, 90, "100%");
+			batteryText = new FlxText(75, 20, 90, "100%");
 			batteryText.size = 20;
 			batteryText.alignment = "left";
 			add(batteryText);

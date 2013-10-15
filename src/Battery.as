@@ -13,7 +13,7 @@ package {
 		
 		public function Battery():void {
 			this.x = 10;
-			this.y = 25;
+			this.y = 22;
 			loadGraphic(Sources.ImgBattery, true, false, 50, 23, true);
 			this.frame = 3;
 		}
