@@ -2,15 +2,20 @@ package
 {
 	import org.flixel.FlxG;
 	import org.flixel.FlxObject;
+	import org.flixel.FlxSound;
 	import org.flixel.FlxSprite;
 	
 	public class Player extends FlxSprite
 	{
 		public var camTar:FlxObject;
-	
+		public var walk:FlxSound = FlxG.play(Sources.LampWalkSoundEffect, 0.25, true);
+		public var beam:FlxSound = FlxG.play(Sources.LightBeamSoundEffect, 0.25, true);
+		
 		private var camY:int = 120;
 		private var jumpHeight:int = -200;
 		private var movespeed:int = 150;
+		private var yVelocity:int = -400;
+		
 		
 		public function Player():void
 		{ 
@@ -50,6 +55,13 @@ package
 			var left:Boolean = (FlxG.keys.LEFT || FlxG.keys.A);
 			var up:Boolean = (FlxG.keys.UP || FlxG.keys.W);
 			
+			if (FlxG.keys.E){
+				beam.play();
+			} else
+			{
+				beam.stop();
+			}
+			
 			if (touching & DOWN)
 			{
 				if (!left && !right) 
@@ -58,26 +70,40 @@ package
 				} else 
 				{
 					play('walk');
-//					FlxG.play(Sources.LampWalkSoundEffect, 0.25);
+					
 				}
-				if (up)
+				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
-					velocity.y = -200;
+
+					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
+
+
+					velocity.y = yVelocity;
+
 				}
 			} else
 			{
 				play('jump');
-//				FlxG.play(Sources.LampJumpSoundEffect, 0.25);
 			}
 			if (right)
 			{
+
 				velocity.x = 75;
 				facing = LEFT; 
 				if (x > FlxG.width - width) 
 				{
 					velocity.x = 0; 
 				}
+			} 
+			
+			if (left || right)
+			{
+				walk.play();
+			} else 
+			{
+				walk.stop();
 			}
+			
 			if (left)
 			{
 				velocity.x = -75;
@@ -86,7 +112,8 @@ package
 				{
 					velocity.x = 0; 
 				}
-			}
+			} 
+			
 			super.update();
 	
 		}
