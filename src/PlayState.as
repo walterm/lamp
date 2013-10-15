@@ -1,11 +1,13 @@
 package
 {
 	import org.flixel.FlxG;
+	import org.flixel.FlxGroup;
+	import org.flixel.FlxObject;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
+	import org.flixel.FlxTileblock;
 	import org.flixel.FlxTilemap;
-	import org.flixel.FlxObject; 
 
 	public class PlayState extends FlxState
 	{
@@ -33,6 +35,10 @@ package
 		private var battery:Battery;
 		private var batteryText:FlxText;
 		private var debug:Boolean = false;
+		
+		private var platformGroup:FlxGroup;
+		
+		private var block:FlxTileblock;
 
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -63,73 +69,43 @@ package
 			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
 			
-			//Top row
-			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-			
-//			for(var i:int = 0; i < columns * 2; i++){
-//				platformData.push(0);
-//			}
-//			
-//			
+			//Making sure the player spawns on something solid
 			var totalCells:int = rows * columns;
-//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
-//				if(n % columns == 0 || n % columns == (columns - 1))
-//					platformData.push(1);
-//				else {
-//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-//						if(willPlacePlatform){
-//							var platNum:int = Math.floor(Math.random() * 4 + 3);
-//							switch(platNum){
-//								case 3:
-//									platformData = pushPlatform(platformData, 3);
-//									n = platformData.length;
-//									break;
-//								case 4:
-//									platformData = pushPlatform(platformData, 4);
-//									n = platformData.length;
-//									break;
-//								case 5:
-//									platformData = pushPlatform(platformData, 5);
-//									n = platformData.length;
-//									break;
-//								case 6:
-//									platformData = pushPlatform(platformData, 6);
-//									n = platformData.length;
-//									break;
-//								case 7:
-//									platformData = pushPlatform(platformData, 7);
-//									n = platformData.length;
-//									break;
-//							}
-//							
-//						}
-//					
-//				}
-//			}
-//			
-//			for(n= 0; n < 80; n++){
-//				platformData.push(1);
-//			}
-			
-			for(var n:int = 0; n < totalCells - columns * 3; n++){
+			var platformData:Array = new Array();
+			for(var i:int = 0; i < totalCells - columns; i++){
 				platformData.push(0);
 			}
 			
-			for(n = platformData.length; n < totalCells; n++){
+			while(i < totalCells){
 				platformData.push(1);
+				i++;
 			}
 			
-			//Loading in the tilemap
-			level = new FlxTilemap();
+			var level:FlxTilemap = new FlxTilemap();
 			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
 			
+			//Let's make a lamp bro
 			player = new Player(); 
 			player.x = FlxG.width / 2.0; 
 			player.y = FlxG.height / 2.0; 
-			
 			add(player);
+			
+			
+			//Platform generation (note that the platforms are a bit too big...)
+			var LEFT_X:int = 0;
+			var RIGHT_X:int = FlxG.width - 160;
+			var currentY:int = FlxG.height - 80;
+
+			for(var n:int = 0; n < 8; n++){
+				if(n % 2 == 0)
+					block = new FlxTileblock(LEFT_X, currentY, 160, 80);
+				else block = new FlxTileblock(RIGHT_X, currentY, 160, 80);
+				block.solid = true;
+				block.loadGraphic(Sources.ImgPlatform1);
+				add(block);
+				currentY -= 80;
+			}
 			
 			//add the darkness last bc we want it to be the top layer 
 			darkness = new FlxSprite(0,0);
