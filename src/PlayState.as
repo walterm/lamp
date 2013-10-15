@@ -29,9 +29,14 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = false;
+
+		private var debug:Boolean = true;
 		
 		private var block:FlxTileblock;
+
+		private var battery:Battery;
+		private var batteryText:FlxText;
+
 		
 		override public function create():void
 		{
@@ -106,14 +111,35 @@ package
 			var planttest:Plant = new Plant(); 
 			planttest.x = FlxG.width/2.0;
 			planttest.y = FlxG.height/2.0;
-			add(planttest); 
+			add(planttest);
+			
+			// battery stuff
+			batteryText = new FlxText(75, 20, 90, "100%");
+			batteryText.size = 20;
+			batteryText.alignment = "left";
+			add(batteryText);
+			
+			battery = new Battery();
+			add(battery);
 			
 			// bulb stuff
+			createBulbs();
+			
+			if (!debug) 
+			{
+				add(darkness);
+			}
+						
+			pause = new Pause();
+		}
+		
+		private function createBulbs():void
+		{
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
 			bulbText.alignment = "right";
 			add(bulbText);
-			
+						
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
@@ -126,7 +152,7 @@ package
 				
 				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
 				bulbLightArray.push(bulbLight);
-				add(bulbLight); 
+				add(bulbLight);
 			}
 			
 			if (!debug) 
@@ -147,9 +173,18 @@ package
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
-					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");		
-					
+					// recover battery
+					battery.recover(); 
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
 				}
+			}
+		}
+		
+		private function updateBattery():void
+		{
+			batteryText.text = ""+Math.ceil(battery.batteryLife)+"%";
+			if (battery.batteryLife <= 0){
+				FlxG.switchState(new EndScreen());
 			}
 		}
 		
@@ -165,7 +200,7 @@ package
 				collideBulbs();
 
 				checkLightBeam(); 
-
+				updateBattery();
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -193,7 +228,7 @@ package
 		}
 		
 		private function checkLightBeam():void {
-			if (player.facing == FlxObject.RIGHT) 
+			if (player.facing == FlxObject.LEFT) 
 			{
 				lightBeamPlayer.angle = 45; 
 				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
