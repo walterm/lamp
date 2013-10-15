@@ -8,11 +8,10 @@ package
 
 	public class PlayState extends FlxState
 	{
-		public var level:FlxTilemap;
+		public static var level:FlxTilemap;
 		public var player:FlxSprite;
 		public var rows:int = 50;
 		public var columns:int = 80;
-		public var ROW_PROBABILITY:Number = 0.1;
 		public var pause:Pause;
 		
 		public var ROW_PROB:Number = 0.1;
@@ -29,27 +28,6 @@ package
 		private var bulbText:FlxText;
 		private var debug:Boolean = false;
 		
-		private function pushPlatform(data:Array, platformLength:int):Array
-		{
-			for(var i:int = 0; i < platformLength; i++){
-				data.push(1);
-			};
-			for(i = 0; i < platformLength; i++){
-				data.push(0);
-			};
-			return data;
-		}
-		
-		private function addBlankRow(data:Array):Array
-		{
-			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
-			for(var i:int = 0; i < rowData.length; i++){
-				data.push(rowData);
-			}
-			return data;
-		}
-		
 		override public function create():void
 		{
 			
@@ -61,53 +39,8 @@ package
 			//Top row
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-			
-//			for(var i:int = 0; i < columns * 2; i++){
-//				platformData.push(0);
-//			}
-//			
-//			
 			var totalCells:int = rows * columns;
-//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
-//				if(n % columns == 0 || n % columns == (columns - 1))
-//					platformData.push(1);
-//				else {
-//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-//						if(willPlacePlatform){
-//							var platNum:int = Math.floor(Math.random() * 4 + 3);
-//							switch(platNum){
-//								case 3:
-//									platformData = pushPlatform(platformData, 3);
-//									n = platformData.length;
-//									break;
-//								case 4:
-//									platformData = pushPlatform(platformData, 4);
-//									n = platformData.length;
-//									break;
-//								case 5:
-//									platformData = pushPlatform(platformData, 5);
-//									n = platformData.length;
-//									break;
-//								case 6:
-//									platformData = pushPlatform(platformData, 6);
-//									n = platformData.length;
-//									break;
-//								case 7:
-//									platformData = pushPlatform(platformData, 7);
-//									n = platformData.length;
-//									break;
-//							}
-//							
-//						}
-//					
-//				}
-//			}
-//			
-//			for(n= 0; n < 80; n++){
-//				platformData.push(1);
-//			}
-			
-			for(var n:int = 0; n < totalCells - columns * 3; n++){
+			for(var n:int = 0; n < totalCells - columns * 2; n++){
 				platformData.push(0);
 			}
 			
@@ -133,8 +66,8 @@ package
 			darkness.blend = "multiply";
 			
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
-			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2; 
+			lightPlayer.scale.x = 3;
+			lightPlayer.scale.y = 3; 
 			add(lightPlayer);
 	
 			// bulb stuff
@@ -160,7 +93,7 @@ package
 			
 			if (!debug) 
 			{
-				add(darkness);
+//				add(darkness);
 			}
 						
 			pause = new Pause();
@@ -182,11 +115,14 @@ package
 		
 		override public function update():void 
 		{
+			//update the level's tile
+			
 			if (!pause.showing)
 			{
 				super.update();
 				FlxG.collide(level, player);
 				collideBulbs();
+				
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -197,12 +133,17 @@ package
 					pause.showPaused();
 					add(pause);
 				}
+				if(Math.random() > PLATFORM_PROB){
+					PLATFORM_PROB += 0.1;
+					level.setTile(player.x/5, player.y/10, 1);
+				} else PLATFORM_PROB -= 0.05;
 			} else
 			{
 				pause.update();
 			}
 			
 			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
+			
 		}
 		
 		override public function draw():void {
