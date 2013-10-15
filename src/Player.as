@@ -13,6 +13,7 @@ package
 		private var camY:int = 120;
 		private var jumpHeight:int = -200;
 		private var movespeed:int = 150;
+		private var yVelocity:int = -400;
 		
 		
 		public function Player():void
@@ -65,8 +66,11 @@ package
 				}
 				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
-					velocity.y = -200;
+
 					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
+
+
+					velocity.y = yVelocity;
 
 				}
 			} else
