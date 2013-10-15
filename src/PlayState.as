@@ -30,8 +30,12 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
+
+
+		private var battery:Battery;
+		private var batteryText:FlxText;
 		private var debug:Boolean = true;
-		
+
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
 			for(var i:int = 0; i < platformLength; i++){
@@ -138,7 +142,7 @@ package
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2; 
+			lightPlayer.scale.y = 2;
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
@@ -149,30 +153,46 @@ package
 			lightBeamPlayer.visible = false; 
 			
 			//test plants 
+
 			plant = new Plant(); 
 			plant.x = FlxG.width/2.0 - 80;
 			plant.y = FlxG.height/2.0;
 			add(plant); 
+
 			
 			// bulb stuff
+			createBulbs();
+			
+			if (!debug) 
+			{
+				add(darkness);
+			}
+			
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
 			bulbText.alignment = "right";
 			add(bulbText);
 			
+			createBattery();	
+						
+			pause = new Pause();
+		}
+		
+		private function createBulbs():void
+		{						
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
 				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 120) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 				
 				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
 				bulbLightArray.push(bulbLight);
-				add(bulbLight); 
+				add(bulbLight);
 			}
 			
 			if (!debug) 
@@ -181,6 +201,18 @@ package
 			}
 						
 			pause = new Pause();
+		}
+		
+		private function createBattery():void
+		{
+			// battery stuff
+			batteryText = new FlxText(75, 20, 90, "100%");
+			batteryText.size = 20;
+			batteryText.alignment = "left";
+			add(batteryText);
+			
+			battery = new Battery();
+			add(battery);
 		}
 		
 		private function collideBulbs():void
@@ -193,12 +225,14 @@ package
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
-					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");		
-					
+					// recover battery
+					battery.recover(); 
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
 				}
 			}
 		}
 		
+
 		private function treeClimb():void
 		{
 			if (FlxG.overlap(player, plant) && (FlxG.keys.UP ||  FlxG.keys.W)) 
@@ -216,6 +250,12 @@ package
 				player.acceleration.y = 600;
 			}
 		}
+
+		private function updateBattery():void
+		{
+			batteryText.text = ""+Math.ceil(battery.batteryLife)+"%";
+
+		}
 		
 		override public function update():void 
 		{
@@ -224,8 +264,9 @@ package
 				super.update();
 				FlxG.collide(level, player);
 				collideBulbs();
-				checkLightBeam();
-				treeClimb();
+				checkLightBeam(); 
+				treeClimb()
+				updateBattery();
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -258,9 +299,10 @@ package
 				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
-			if (FlxG.keys.E)
+			if (FlxG.keys.E && battery.batteryLife > 0)
 			{
-				lightBeamPlayer.visible = true; 
+				lightBeamPlayer.visible = true;
+				lightBeamPlayer.alpha = battery.batteryLife / battery.maxBatteryLife;
 			}
 			else 
 			{
