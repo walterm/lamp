@@ -29,10 +29,11 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
+
 		private var battery:Battery;
 		private var batteryText:FlxText;
 		private var debug:Boolean = true;
-		
+
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
 			for(var i:int = 0; i < platformLength; i++){
@@ -196,6 +197,13 @@ package
 				bulbLightArray.push(bulbLight);
 				add(bulbLight);
 			}
+			
+			if (!debug) 
+			{
+				add(darkness);
+			}
+						
+			pause = new Pause();
 		}
 		
 		private function collideBulbs():void
@@ -253,7 +261,7 @@ package
 		}
 		
 		private function checkLightBeam():void {
-			if (player.facing == FlxObject.RIGHT) 
+			if (player.facing == FlxObject.LEFT) 
 			{
 				lightBeamPlayer.angle = 45; 
 				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
