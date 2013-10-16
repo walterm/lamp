@@ -36,7 +36,7 @@ package
 
 		private var battery:Battery;
 		private var batteryText:FlxText;
-		private var debug:Boolean = false;
+		private var debug:Boolean = true;
 
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -225,6 +225,10 @@ package
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
+					if (bulbsCollected == BULB_COUNT)
+					{
+						FlxG.switchState(new EndScreen());
+					}
 					// recover battery
 					battery.recover(); 
 					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");

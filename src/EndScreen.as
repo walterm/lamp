@@ -9,7 +9,7 @@ package
 		override public function create(): void
 		{
 			var t: FlxText;
-			t = new FlxText(40, FlxG.height/2-80, FlxG.width, "Game Over");
+			t = new FlxText(40, FlxG.height/2-80, FlxG.width, "You Win! Congrats!");
 			t.size = 20;
 			t.alignment = "left";
 			add(t);
