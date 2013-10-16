@@ -8,6 +8,7 @@ package
 		private var darkness:FlxSprite;
 		
 		public function Light(x:Number, y:Number, darkness:FlxSprite):void {
+			FlxG.visualDebug = true;
 			super(x, y, LightImageClass);
 			loadGraphic(Sources.ImgLight, x, y); 
 			
@@ -15,14 +16,24 @@ package
 			this.blend = "screen";
 		}
 		
-		override public function draw():void {
-			var screenXY:FlxPoint = getScreenXY();
-			
-			darkness.stamp(this,
-				screenXY.x - this.width / 2,
-				screenXY.y - this.height / 2);
-		}
-		
+//		override public function draw():void {
+//			var screenXY:FlxPoint = getScreenXY();
+//			var divisorx:Number;
+//			var divisory:Number;
+//			if (this.scale.x == 2 && this.scale.y == 2 )
+//			{
+//				divisorx = divisory = 2.0; 
+//			} 
+//			else 
+//			{
+//				divisorx = this.scale.x * 2.0;
+//				divisory = this.scale.y * 2.0;
+//			}
+//			darkness.stamp(this,
+//				screenXY.x,
+//				screenXY.y);
+//		}
+	
 		override public function update():void {
 			
 		}
@@ -33,25 +44,5 @@ package
 			y = newY; 
 		}
 		
-		private function movement():void
-		{
-			
-			if (FlxG.keys.SPACE) {
-				if (touching & DOWN) {
-					velocity.y = 20;
-					//add jump animation and jump sound here
-					
-				} 
-			} 
-			if (FlxG.keys.A || FlxG.keys.LEFT){
-				velocity.x = -150
-				//add walk animation here
-				
-			} else if (FlxG.keys.D || FlxG.keys.RIGHT){
-				velocity.x = 150
-				//add walk animation here
-			}
-			
-		}
 	}
 }

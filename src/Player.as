@@ -14,6 +14,7 @@ package
 		
 		public function Player():void
 		{ 
+			FlxG.visualDebug = true;
 			loadGraphic(Sources.ImgPlayer, true, true, 80, 80);
 			
 //			var lightbeam:FlxSprite;
@@ -35,6 +36,8 @@ package
 		
 		override public function update():void
 		{
+			
+			
 			movement();
 			
 			camTar.x = x;

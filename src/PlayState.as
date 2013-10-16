@@ -1,16 +1,18 @@
 package
 {
 	import org.flixel.FlxG;
+	import org.flixel.FlxObject;
+	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap;
-	import org.flixel.FlxObject; 
 
 	public class PlayState extends FlxState
 	{
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
+		public var playertest:Player;
 		public var rows:int = 50;
 		public var columns:int = 80;
 		public var ROW_PROBABILITY:Number = 0.1;
@@ -29,7 +31,7 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		private var debug:Boolean = true;
+		public static var debug:Boolean = true;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -54,6 +56,7 @@ package
 		
 		override public function create():void
 		{
+			FlxG.visualDebug = true;
 			
 			FlxG.playMusic(Sources.BackgroundMusic, 1);
 			
@@ -128,6 +131,19 @@ package
 			
 			add(player);
 			
+			playertest = new Player(); 
+			playertest.x = FlxG.width / 2.0 - 100; 
+			playertest.y = FlxG.height / 2.0; 
+			
+			playertest.scale.x = 2; 
+//			playertest.scale.y = 2;
+			playertest.offset.x += Math.floor(playertest.width * -(playertest.scale.x - 1)/2);
+//			playertest.offset.y += Math.floor(playertest.height * -(playertest.scale.y - 1)/2);
+//			playertest.angle = 45;
+			playertest.width *= playertest.scale.x;
+			playertest.height *= playertest.scale.y;
+//			add(playertest);
+			
 			//add the darkness last bc we want it to be the top layer 
 			darkness = new FlxSprite(0,0);
 			darkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
@@ -137,22 +153,20 @@ package
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2; 
+			lightPlayer.scale.y = 2;
+			lightPlayer.x -= lightPlayer.width / 2.0; 
+			lightPlayer.y -= lightPlayer.height /2.0;
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
 			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
 			lightBeamPlayer.scale.y = 3; 
+			lightBeamPlayer.offset.y += Math.floor(lightBeamPlayer.height * -(lightBeamPlayer.scale.y - 1)/2);;
+			lightBeamPlayer.height *= 3; 
+//			lightBeamPlayer.offset.y = lightBeamPlayer.height / 2.0;
 			lightBeamPlayer.angle = 45; 
 			add(lightBeamPlayer);
-			lightBeamPlayer.visible = false; 
-			
-			//test plants 
-			var planttest:Plant = new Plant(); 
-			planttest.x = FlxG.width/2.0;
-			planttest.y = FlxG.height/2.0;
-			add(planttest); 
-			
+						
 			// bulb stuff
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
@@ -170,6 +184,8 @@ package
 				add(bulb);
 				
 				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
+				bulbLight.x -= bulbLight.width / 2.0;
+				bulbLight.y -= bulbLight.height/ 2.0;
 				bulbLightArray.push(bulbLight);
 				add(bulbLight); 
 			}
@@ -204,8 +220,10 @@ package
 			{
 				super.update();
 				FlxG.collide(level, player);
+				FlxG.collide(level, playertest);
 				collideBulbs();
 				checkLightBeam(); 
+				growPlant();
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -217,7 +235,7 @@ package
 					add(pause);
 				}
 				
-				lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);	
+				lightPlayer.follow(player.getMidpoint().x - lightPlayer.width / 2.0, player.getMidpoint().y - lightPlayer.height /2.0);	
 				
 			} else
 			{
@@ -226,16 +244,27 @@ package
 					
 		}
 		
+		private function growPlant():void {
+			if (FlxG.keys.justPressed("E") && FlxG.collide(lightBeamPlayer, level)) 
+			{
+				var plant:Plant = new Plant(); 
+				var lightBeamAngleRad:Number = lightBeamPlayer.angle * Math.PI / 180.0; 
+				plant.x = lightBeamPlayer.x + lightBeamPlayer.height * Math.sin(lightBeamAngleRad);
+				plant.y = lightBeamPlayer.y + lightBeamPlayer.height * Math.cos(lightBeamAngleRad);
+				add(plant); 
+			}
+		}
+		
 		private function checkLightBeam():void {
 			if (player.facing == FlxObject.RIGHT) 
 			{
 				lightBeamPlayer.angle = 45; 
-				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
+				lightBeamPlayer.follow(player.x - lightBeamPlayer.width / 2.0, player.getMidpoint().y - lightBeamPlayer.height/2.0 );
 			}
 			else 
 			{
 				lightBeamPlayer.angle = 315; 
-				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
+				lightBeamPlayer.follow(player.x + player.width - lightBeamPlayer.width / 2.0, player.getMidpoint().y - lightBeamPlayer.height/2.0);
 			}
 			
 			if (FlxG.keys.E)
