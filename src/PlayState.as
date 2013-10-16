@@ -36,7 +36,7 @@ package
 
 		private var battery:Battery;
 		private var batteryText:FlxText;
-		private var debug:Boolean = true;
+		private var debug:Boolean = false;
 
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
