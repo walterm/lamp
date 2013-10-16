@@ -6,15 +6,15 @@ package
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap; 
-	import org.flixel.FlxTileblock;
 
 	public class PlayState extends FlxState
 	{
-		public static var level:FlxTilemap;
+		public var level:FlxTilemap;
 		public var player:FlxSprite;
 		public var plant:Plant;
 		public var rows:int = 50;
 		public var columns:int = 80;
+		public var ROW_PROBABILITY:Number = 0.1;
 		public var pause:Pause;
 		
 		public var ROW_PROB:Number = 0.1;
@@ -31,12 +31,31 @@ package
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
 
-		private var debug:Boolean = true;
-		
-		private var block:FlxTileblock;
+
 		private var battery:Battery;
 		private var batteryText:FlxText;
+		private var debug:Boolean = false;
 
+		private function pushPlatform(data:Array, platformLength:int):Array
+		{
+			for(var i:int = 0; i < platformLength; i++){
+				data.push(1);
+			};
+			for(i = 0; i < platformLength; i++){
+				data.push(0);
+			};
+			return data;
+		}
+		
+		private function addBlankRow(data:Array):Array
+		{
+			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			for(var i:int = 0; i < rowData.length; i++){
+				data.push(rowData);
+			}
+			return data;
+		}
 		
 		override public function create():void
 		{
@@ -46,39 +65,67 @@ package
 			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
 			
-			var platformData:Array = new Array();
+			//Top row
+			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			
+//			for(var i:int = 0; i < columns * 2; i++){
+//				platformData.push(0);
+//			}
+//			
+//			
 			var totalCells:int = rows * columns;
-			var stop:int =  columns * 20;
+//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
+//				if(n % columns == 0 || n % columns == (columns - 1))
+//					platformData.push(1);
+//				else {
+//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+//						if(willPlacePlatform){
+//							var platNum:int = Math.floor(Math.random() * 4 + 3);
+//							switch(platNum){
+//								case 3:
+//									platformData = pushPlatform(platformData, 3);
+//									n = platformData.length;
+//									break;
+//								case 4:
+//									platformData = pushPlatform(platformData, 4);
+//									n = platformData.length;
+//									break;
+//								case 5:
+//									platformData = pushPlatform(platformData, 5);
+//									n = platformData.length;
+//									break;
+//								case 6:
+//									platformData = pushPlatform(platformData, 6);
+//									n = platformData.length;
+//									break;
+//								case 7:
+//									platformData = pushPlatform(platformData, 7);
+//									n = platformData.length;
+//									break;
+//							}
+//							
+//						}
+//					
+//				}
+//			}
+//			
+//			for(n= 0; n < 80; n++){
+//				platformData.push(1);
+//			}
 			
-			stop =  columns * 35;
-			for(var j:int = 0; j < stop - rows; j++){
-				platformData.push(0);
-			}
-			
-			for(var n:int = stop - rows; n < stop; n++){
-				platformData.push(1);
-			}
-			
-			var last:int = n;
-			for(n = last; n < totalCells - columns; n++){
+			for(var n:int = 0; n < totalCells - columns * 3; n++){
 				platformData.push(0);
 			}
 			
 			for(n = platformData.length; n < totalCells; n++){
 				platformData.push(1);
 			}
-
 			
 			//Loading in the tilemap
 			level = new FlxTilemap();
 			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
 			add(level);
-			
-			block = new FlxTileblock(320, 240, 12, 6);
-			block.solid = true;
-			block.loadTiles(Sources.ImgBulb);
-			add(block);
 			
 			player = new Player(); 
 			player.x = FlxG.width / 2.0; 
@@ -94,18 +141,13 @@ package
 			
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
-			lightPlayer.scale.x = 3;
-			lightPlayer.scale.y = 3; 
-			lightPlayer.width *= lightPlayer.scale.x; 
-			lightPlayer.height *= lightPlayer.scale.y;
-
+			lightPlayer.scale.x = 2;
+			lightPlayer.scale.y = 2;
 			add(lightPlayer);
 	
 			//add light beam onto player, keep invisible until needed 
 			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
 			lightBeamPlayer.scale.y = 3; 
-			lightBeamPlayer.height *= 3;
-			lightBeamPlayer.centerOffsets();
 			lightBeamPlayer.angle = 45; 
 			add(lightBeamPlayer);
 			lightBeamPlayer.visible = false; 
@@ -202,7 +244,7 @@ package
 				player.velocity.y = 100;
 				player.acceleration.y = 0;	
 			} else if (FlxG.overlap(player, plant)) {
-				player.velocity.y = 0;
+				player.velocity.y = 0
 				player.acceleration.y = 0;
 			} else {
 				player.acceleration.y = 600;
@@ -217,17 +259,13 @@ package
 		
 		override public function update():void 
 		{
-			//update the level's tile
-			
 			if (!pause.showing)
 			{
 				super.update();
-				FlxG.collide(block, player);
 				FlxG.collide(level, player);
 				collideBulbs();
-
 				checkLightBeam(); 
-				treeClimb();
+				treeClimb()
 				updateBattery();
 				if (FlxG.keys.COMMA)
 				{
@@ -239,12 +277,6 @@ package
 					pause.showPaused();
 					add(pause);
 				}
-
-				if(Math.random() > PLATFORM_PROB){
-					PLATFORM_PROB += 0.1;
-					
-				} else PLATFORM_PROB -= 0.05;
-
 				
 				lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);	
 				
@@ -267,8 +299,6 @@ package
 				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
-			lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);
-
 			if (FlxG.keys.E && battery.batteryLife > 0)
 			{
 				battery.drain();
