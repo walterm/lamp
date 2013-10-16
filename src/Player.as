@@ -68,26 +68,24 @@ package
 			
 			if (touching & DOWN)
 			{
-				
-				if (!left && !right) 
-				{
-					play('idle');
-				} else 
+				if (left || right)
 				{
 					play('walk');
-				}
-				
-				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
+					walk.play();
+				} else if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
 					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
 					velocity.y = yVelocity;
 				}
-				else
-				{
-					play('jump');
+				else {
+					play('idle');
+					walk.stop();
 				}
+			} else
+			{
+				play('jump');
 			}
-				
+							
 			if (right)
 			{
 				velocity.x = 75;
@@ -96,17 +94,7 @@ package
 				{
 					velocity.x = 0; 
 				}
-			} 
-			
-			if (left || right)
-			{
-				walk.play();
-			} else 
-			{
-				walk.stop();
-			}
-			
-			if (left)
+			} else if (left)
 			{
 				velocity.x = -75;
 				facing = LEFT; 
@@ -114,9 +102,10 @@ package
 				{
 					velocity.x = 0; 
 				}
-			} 
+			}
 			
 			super.update();
 	
 		}
-	}}
+	}
+}
