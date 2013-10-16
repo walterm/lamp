@@ -310,10 +310,8 @@ package
 				lightBeamPlayer.visible = false;
 			}
 			
-			if (FlxG.overlap(lightBeamPlayer, plant)){
-				lightBeamPlayer.color = 0xff0000;
-			} else {
-				lightBeamPlayer.color = 0x0000ff;
+			if (FlxG.overlap(lightBeamPlayer, plant) && FlxG.keys.E){
+				plant.grow();
 			}
 		}
 		

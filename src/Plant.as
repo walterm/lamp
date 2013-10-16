@@ -30,10 +30,17 @@ package
 			{
 				play('grow');
 				this.height = 100;
-				this.centerOffsets();
 				isGrown = true;
 			}
 		}
 		
+		public function grow():void
+		{
+			if (!isGrown){
+				play('grow');
+				this.height = 100;
+				isGrown = true;
+			}
+		}
 	}
 }
