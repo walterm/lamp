@@ -2,17 +2,16 @@ package
 {
 	import org.flixel.FlxG;
 	import org.flixel.FlxObject;
-	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
-	import org.flixel.FlxTilemap;
-
+	import org.flixel.FlxTilemap; 
+	
 	public class PlayState extends FlxState
 	{
 		public var level:FlxTilemap;
 		public var player:FlxSprite;
-		public var playertest:Player;
+		//public var plant:Plant;
 		public var rows:int = 50;
 		public var columns:int = 80;
 		public var ROW_PROBABILITY:Number = 0.1;
@@ -31,7 +30,11 @@ package
 		private var bulbArray:Array;
 		private var bulbLightArray:Array;
 		private var bulbText:FlxText;
-		public static var debug:Boolean = true;
+		
+		private var plantArray:Array; 
+		private var battery:Battery;
+		private var batteryText:FlxText;
+		private var debug:Boolean = false;
 		
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
@@ -56,7 +59,6 @@ package
 		
 		override public function create():void
 		{
-			FlxG.visualDebug = true;
 			
 			FlxG.playMusic(Sources.BackgroundMusic, 1);
 			
@@ -67,50 +69,50 @@ package
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			
-//			for(var i:int = 0; i < columns * 2; i++){
-//				platformData.push(0);
-//			}
-//			
-//			
+			//                        for(var i:int = 0; i < columns * 2; i++){
+			//                                platformData.push(0);
+			//                        }
+			//                        
+			//                        
 			var totalCells:int = rows * columns;
-//			for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
-//				if(n % columns == 0 || n % columns == (columns - 1))
-//					platformData.push(1);
-//				else {
-//						var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-//						if(willPlacePlatform){
-//							var platNum:int = Math.floor(Math.random() * 4 + 3);
-//							switch(platNum){
-//								case 3:
-//									platformData = pushPlatform(platformData, 3);
-//									n = platformData.length;
-//									break;
-//								case 4:
-//									platformData = pushPlatform(platformData, 4);
-//									n = platformData.length;
-//									break;
-//								case 5:
-//									platformData = pushPlatform(platformData, 5);
-//									n = platformData.length;
-//									break;
-//								case 6:
-//									platformData = pushPlatform(platformData, 6);
-//									n = platformData.length;
-//									break;
-//								case 7:
-//									platformData = pushPlatform(platformData, 7);
-//									n = platformData.length;
-//									break;
-//							}
-//							
-//						}
-//					
-//				}
-//			}
-//			
-//			for(n= 0; n < 80; n++){
-//				platformData.push(1);
-//			}
+			//                        for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
+			//                                if(n % columns == 0 || n % columns == (columns - 1))
+			//                                        platformData.push(1);
+			//                                else {
+			//                                                var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
+			//                                                if(willPlacePlatform){
+			//                                                        var platNum:int = Math.floor(Math.random() * 4 + 3);
+			//                                                        switch(platNum){
+			//                                                                case 3:
+			//                                                                        platformData = pushPlatform(platformData, 3);
+			//                                                                        n = platformData.length;
+			//                                                                        break;
+			//                                                                case 4:
+			//                                                                        platformData = pushPlatform(platformData, 4);
+			//                                                                        n = platformData.length;
+			//                                                                        break;
+			//                                                                case 5:
+			//                                                                        platformData = pushPlatform(platformData, 5);
+			//                                                                        n = platformData.length;
+			//                                                                        break;
+			//                                                                case 6:
+			//                                                                        platformData = pushPlatform(platformData, 6);
+			//                                                                        n = platformData.length;
+			//                                                                        break;
+			//                                                                case 7:
+			//                                                                        platformData = pushPlatform(platformData, 7);
+			//                                                                        n = platformData.length;
+			//                                                                        break;
+			//                                                        }
+			//                                                        
+			//                                                }
+			//                                        
+			//                                }
+			//                        }
+			//                        
+			//                        for(n= 0; n < 80; n++){
+			//                                platformData.push(1);
+			//                        }
 			
 			for(var n:int = 0; n < totalCells - columns * 3; n++){
 				platformData.push(0);
@@ -131,19 +133,6 @@ package
 			
 			add(player);
 			
-			playertest = new Player(); 
-			playertest.x = FlxG.width / 2.0 - 100; 
-			playertest.y = FlxG.height / 2.0; 
-			
-			playertest.scale.x = 2; 
-//			playertest.scale.y = 2;
-			playertest.offset.x += Math.floor(playertest.width * -(playertest.scale.x - 1)/2);
-//			playertest.offset.y += Math.floor(playertest.height * -(playertest.scale.y - 1)/2);
-//			playertest.angle = 45;
-			playertest.width *= playertest.scale.x;
-			playertest.height *= playertest.scale.y;
-//			add(playertest);
-			
 			//add the darkness last bc we want it to be the top layer 
 			darkness = new FlxSprite(0,0);
 			darkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
@@ -154,64 +143,124 @@ package
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
 			lightPlayer.scale.x = 2;
 			lightPlayer.scale.y = 2;
-			lightPlayer.x -= lightPlayer.width / 2.0; 
-			lightPlayer.y -= lightPlayer.height /2.0;
 			add(lightPlayer);
-	
+			
 			//add light beam onto player, keep invisible until needed 
 			lightBeamPlayer = new Light(player.x, player.getMidpoint().y, darkness);
 			lightBeamPlayer.scale.y = 3; 
-			lightBeamPlayer.offset.y += Math.floor(lightBeamPlayer.height * -(lightBeamPlayer.scale.y - 1)/2);;
-			lightBeamPlayer.height *= 3; 
-//			lightBeamPlayer.offset.y = lightBeamPlayer.height / 2.0;
 			lightBeamPlayer.angle = 45; 
 			add(lightBeamPlayer);
-						
+			lightBeamPlayer.visible = false; 
+			
+			//test plants 
+//			plant = new Plant(); 
+//			plant.x = FlxG.width/2.0 - 80;
+//			plant.y = FlxG.height/2.0;
+//			add(plant); 
+			
+			
 			// bulb stuff
+			createBulbs();
+			plantArray = new Array();
+			
+			if (!debug) 
+			{
+				add(darkness);
+			} else {
+				// debugging
+				FlxG.debug = true;
+				FlxG.visualDebug = true;
+			}
+			
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
 			bulbText.alignment = "right";
 			add(bulbText);
 			
+			createBattery();        
+			
+			pause = new Pause();
+		}
+		
+		private function createBulbs():void
+		{                                                
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
 				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 80) + 40);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 200) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 				
 				var bulbLight:Light = new Light(bulb.getMidpoint().x, bulb.getMidpoint().y, darkness);
-				bulbLight.x -= bulbLight.width / 2.0;
-				bulbLight.y -= bulbLight.height/ 2.0;
 				bulbLightArray.push(bulbLight);
-				add(bulbLight); 
+				add(bulbLight);
 			}
+		}
+		
+		private function createBattery():void
+		{
+			// battery stuff
+			batteryText = new FlxText(75, 20, 90, "100%");
+			batteryText.size = 20;
+			batteryText.alignment = "left";
+			add(batteryText);
 			
-			if (!debug) 
-			{
-				add(darkness);
-			}
-						
-			pause = new Pause();
+			battery = new Battery();
+			add(battery);
 		}
 		
 		private function collideBulbs():void
 		{
 			for (var i:int = 0; i < bulbArray.length; i++){
 				var bulb:Bulb = bulbArray[i];
-				if (FlxG.collide(bulb, player)){
+				if (FlxG.overlap(bulb, player)){
 					FlxG.play(Sources.BulbPickupSoundEffect, 0.25);
 					// collect it!
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
-					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");		
-					
+					// recover battery
+					battery.recover(); 
+					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");
 				}
 			}
+		}
+		
+		
+		private function treeClimb():void
+		{
+			for (var i:int = 0; i < plantArray.length; i++)
+			{
+				var plant:Plant = plantArray[i]; 
+				if (plant.isGrown && FlxG.overlap(player, plant)){
+					if ((FlxG.keys.UP ||  FlxG.keys.W))
+					{
+						player.velocity.y = -100;
+						player.acceleration.y = 0;
+					} else if ((FlxG.keys.DOWN ||  FlxG.keys.S))
+					{
+						player.velocity.y = 100;
+						player.acceleration.y = 0;        
+					} else {
+						player.velocity.y = 0
+						player.acceleration.y = 0;
+					}
+				} 
+				else 
+				{
+					player.acceleration.y = 600;
+				}
+			}
+			
+		}
+		
+		private function updateBattery():void
+		{
+			batteryText.text = ""+Math.ceil(battery.batteryLife)+"%";
+			
 		}
 		
 		override public function update():void 
@@ -220,60 +269,78 @@ package
 			{
 				super.update();
 				FlxG.collide(level, player);
-				FlxG.collide(level, playertest);
 				collideBulbs();
 				checkLightBeam(); 
-				growPlant();
+				treeClimb()
+				updateBattery();
+				
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
 				}
 				if (FlxG.keys.P)
 				{
-					pause = new Pause;			
+					pause = new Pause;                        
 					pause.showPaused();
 					add(pause);
 				}
 				
-				lightPlayer.follow(player.getMidpoint().x - lightPlayer.width / 2.0, player.getMidpoint().y - lightPlayer.height /2.0);	
+				lightPlayer.follow(player.getMidpoint().x, player.getMidpoint().y);        
 				
 			} else
 			{
 				pause.update();
 			}
-					
-		}
-		
-		private function growPlant():void {
-			if (FlxG.keys.justPressed("E") && FlxG.collide(lightBeamPlayer, level)) 
-			{
-				var plant:Plant = new Plant(); 
-				var lightBeamAngleRad:Number = lightBeamPlayer.angle * Math.PI / 180.0; 
-				plant.x = lightBeamPlayer.x + lightBeamPlayer.height * Math.sin(lightBeamAngleRad);
-				plant.y = lightBeamPlayer.y + lightBeamPlayer.height * Math.cos(lightBeamAngleRad);
-				add(plant); 
-			}
+			
 		}
 		
 		private function checkLightBeam():void {
-			if (player.facing == FlxObject.RIGHT) 
+			if (player.facing == FlxObject.LEFT) 
 			{
 				lightBeamPlayer.angle = 45; 
-				lightBeamPlayer.follow(player.x - lightBeamPlayer.width / 2.0, player.getMidpoint().y - lightBeamPlayer.height/2.0 );
+				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
 			}
 			else 
 			{
 				lightBeamPlayer.angle = 315; 
-				lightBeamPlayer.follow(player.x + player.width - lightBeamPlayer.width / 2.0, player.getMidpoint().y - lightBeamPlayer.height/2.0);
+				lightBeamPlayer.follow(player.x+player.width, player.getMidpoint().y);
 			}
 			
-			if (FlxG.keys.E)
+			if (FlxG.keys.E && battery.batteryLife > 0)
 			{
-				lightBeamPlayer.visible = true; 
+				battery.drain();
+				lightBeamPlayer.visible = true;
+				lightBeamPlayer.alpha = battery.batteryLife / battery.maxBatteryLife;
 			}
 			else 
 			{
 				lightBeamPlayer.visible = false;
+			}
+			
+			if (FlxG.collide(lightBeamPlayer, level) && FlxG.keys.justPressed("E")){
+				
+				var plant1:Plant = new Plant(); 
+				
+				if (player.facing == FlxObject.RIGHT) 
+				{
+					plant1.x = player.x + player.width + lightBeamPlayer.width;
+					plant1.y = player.y - player.height / 2.0;
+				}
+				else 
+				{
+					plant1.x = player.x - lightBeamPlayer.width;
+					plant1.y = player.y - player.height / 2.0;
+				}
+				
+				add(plant1);				
+				plant1.grow();
+				plantArray.push(plant1);
+				
+				var lightPlant:Light = new Light(plant1.x - 15, plant1.y, darkness); 
+				lightPlant.scale.x = 2; 
+				lightPlant.scale.y = 4;
+				add(lightPlant);
+				
 			}
 		}
 		

@@ -8,7 +8,6 @@ package
 		private var darkness:FlxSprite;
 		
 		public function Light(x:Number, y:Number, darkness:FlxSprite):void {
-			FlxG.visualDebug = true;
 			super(x, y, LightImageClass);
 			loadGraphic(Sources.ImgLight, x, y); 
 			
@@ -16,26 +15,14 @@ package
 			this.blend = "screen";
 		}
 		
-//		override public function draw():void {
-//			var screenXY:FlxPoint = getScreenXY();
-//			var divisorx:Number;
-//			var divisory:Number;
-//			if (this.scale.x == 2 && this.scale.y == 2 )
-//			{
-//				divisorx = divisory = 2.0; 
-//			} 
-//			else 
-//			{
-//				divisorx = this.scale.x * 2.0;
-//				divisory = this.scale.y * 2.0;
-//			}
-//			darkness.stamp(this,
-//				screenXY.x,
-//				screenXY.y);
-//		}
-	
-		override public function update():void {
+		override public function draw():void { 
+			var screenXY:FlxPoint = getScreenXY();
 			
+			darkness.stamp(this,
+				screenXY.x - this.width / 2,
+				screenXY.y - this.height / 2);
+			
+			super.draw();
 		}
 		
 		public function follow(newX:Number, newY:Number):void

@@ -8,6 +8,10 @@ package
 		[Embed(source="../assets/bulbsheet.png")] public static var ImgBulb:Class;
 		[Embed(source = '../assets/lightbeam.png')] public static var ImgLightBeam:Class;
 		[Embed(source = '../assets/plantsheet.png')] public static var ImgPlant:Class;
+		[Embed(source = '../assets/batterysheet.png')] public static var ImgBattery:Class;
+		[Embed(source = '../assets/platform1.png')] public static var ImgPlatform1:Class;
+		[Embed(source = '../assets/platform2.png')] public static var ImgPlatform2:Class;
+		
 		
 		//music and sound effects
 		[Embed(source = '../assets/backgroundmusic.mp3')] public static var BackgroundMusic:Class;

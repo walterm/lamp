@@ -13,12 +13,11 @@ package
 			t.size = 20;
 			t.alignment = "left";
 			add(t);
-			t = new FlxText(60, FlxG.height/2-40, FlxG.width, "Play Again? Press enter")
+			t = new FlxText(60, FlxG.height/2-40, FlxG.width, "Play Again? Press enter");
 			
 			t.size = 10;
 			t.alignment = "left";
 			add(t);
-			
 		}
 		
 		override public function update():void
