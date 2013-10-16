@@ -36,6 +36,15 @@ package
 		private var plantArray:Array; 
 		private var battery:Battery;
 		private var batteryText:FlxText;
+		
+		private var platformArray:Array; 
+		private var platform1:FlxSprite; 
+		private var platform2:FlxSprite; 
+		
+		private var gapWidth:int = 300;
+		private var jumpHeight:int = 150;
+		private var gapMultFactor:Number = 1.5;
+		
 		private var debug:Boolean = false;
 		private var background:FlxBackdrop;
 
@@ -62,6 +71,7 @@ package
 		
 		override public function create():void
 		{
+			
 			background = new FlxBackdrop(Sources.ImgBackGround, 0, 0, false, true); 
 			add(background);
 			FlxG.playMusic(Sources.BackgroundMusic, 1);
@@ -73,51 +83,8 @@ package
 			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 			
-			//                        for(var i:int = 0; i < columns * 2; i++){
-			//                                platformData.push(0);
-			//                        }
-			//                        
-			//                        
+                   
 			var totalCells:int = rows * columns;
-			//                        for(var n:int = platformData.length; n < totalCells - (40 * 5); n++){
-			//                                if(n % columns == 0 || n % columns == (columns - 1))
-			//                                        platformData.push(1);
-			//                                else {
-			//                                                var willPlacePlatform:Boolean = Math.random() > PLATFORM_PROB;
-			//                                                if(willPlacePlatform){
-			//                                                        var platNum:int = Math.floor(Math.random() * 4 + 3);
-			//                                                        switch(platNum){
-			//                                                                case 3:
-			//                                                                        platformData = pushPlatform(platformData, 3);
-			//                                                                        n = platformData.length;
-			//                                                                        break;
-			//                                                                case 4:
-			//                                                                        platformData = pushPlatform(platformData, 4);
-			//                                                                        n = platformData.length;
-			//                                                                        break;
-			//                                                                case 5:
-			//                                                                        platformData = pushPlatform(platformData, 5);
-			//                                                                        n = platformData.length;
-			//                                                                        break;
-			//                                                                case 6:
-			//                                                                        platformData = pushPlatform(platformData, 6);
-			//                                                                        n = platformData.length;
-			//                                                                        break;
-			//                                                                case 7:
-			//                                                                        platformData = pushPlatform(platformData, 7);
-			//                                                                        n = platformData.length;
-			//                                                                        break;
-			//                                                        }
-			//                                                        
-			//                                                }
-			//                                        
-			//                                }
-			//                        }
-			//                        
-			//                        for(n= 0; n < 80; n++){
-			//                                platformData.push(1);
-			//                        }
-			
 			for(var n:int = 0; n < totalCells - columns * 3; n++){
 				platformData.push(0);
 			}
@@ -126,16 +93,13 @@ package
 				platformData.push(1);
 			}
 			
-			//Loading in the tilemap
-			level = new FlxTilemap();
-			level.loadMap(FlxTilemap.arrayToCSV(platformData,columns), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO);
-			add(level);
-			
 			player = new Player(); 
-			player.x = FlxG.width / 2.0; 
-			player.y = FlxG.height / 2.0; 
+			player.x = 0; 
+			player.y = 100; 
 			
 			add(player);
+			
+			FlxG.camera.follow(player);
 			
 			//add the darkness last bc we want it to be the top layer 
 			darkness = new FlxSprite(0,0);
@@ -145,8 +109,8 @@ package
 			
 			//add light around player 
 			lightPlayer = new Light(player.getMidpoint().x, player.getMidpoint().y, darkness);
-			lightPlayer.scale.x = 2;
-			lightPlayer.scale.y = 2;
+			lightPlayer.scale.x = 4;
+			lightPlayer.scale.y = 4;
 			add(lightPlayer);
 			
 			//add light beam onto player, keep invisible until needed 
@@ -156,12 +120,7 @@ package
 			add(lightBeamPlayer);
 			lightBeamPlayer.visible = false; 
 			
-			//test plants 
-//			plant = new Plant(); 
-//			plant.x = FlxG.width/2.0 - 80;
-//			plant.y = FlxG.height/2.0;
-//			add(plant); 
-			
+			createPlatforms(10);
 			
 			// bulb stuff
 			createBulbs();
@@ -172,8 +131,8 @@ package
 				add(darkness);
 			} else {
 				// debugging
-				FlxG.debug = true;
-				FlxG.visualDebug = true;
+				//FlxG.debug = true;
+				//FlxG.visualDebug = true;
 			}
 			
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
@@ -186,15 +145,64 @@ package
 			pause = new Pause();
 		}
 		
+		private function createPlatforms(numPlatforms:int):void 
+		{
+			platformArray = new Array();
+			var x:int = 0;
+			var y:int = 0;
+			var gapWidthCurr:int = 200; 
+			var jumpHeightCurr:int = 0; 
+			
+			for (var i:int = 0; i < numPlatforms; i++) 
+			{
+				gapWidthCurr = randomNum(gapWidth-80);  
+				jumpHeightCurr = randomNum(jumpHeight);
+				if (x == 80)
+				{
+					x += -100; 
+				}
+				else 
+				{
+					x += 100;
+				}
+				y += jumpHeightCurr; 
+				var platform:FlxSprite = new FlxSprite(x, y, Sources.ImgPlatform); 
+				platform.immovable = true; 
+				add(platform); 
+				platformArray.push(platform);
+			}
+			
+			platform1 = new FlxSprite(0, FlxG.height, Sources.ImgPlatform);
+			platform1.y = FlxG.height - platform1.height;
+			platform1.immovable = true;
+			add(platform1);
+			platformArray.push(platform1); 
+			
+			platform2 = new FlxSprite(platform1.x + platform1.width + gapWidth, FlxG.height-jumpHeight, Sources.ImgPlatform);
+			platform2.immovable = true;
+			add(platform2);
+			platformArray.push(platform2); 
+		}
+		
+		private function randomNum(interval:Number):int
+		{
+			var rand:Number = Math.random() * interval + 85;
+//			return base + multiplier * rand * coinFlip ;
+			return Math.floor(rand);
+		}
+
 		private function createBulbs():void
 		{                                                
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
+			var gapWidthCurr:int = 200; 
+			var jumpHeightCurr:int = 0; 
+			
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
-				bulb.x = Math.floor(Math.random()*(FlxG.width - 80) + 40);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 200) + 40);
+				bulb.x = Math.floor(Math.random()*(FlxG.width - 50) + 100);
+				bulb.y = Math.floor(Math.random()*(FlxG.height - 150) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
 				
@@ -237,18 +245,61 @@ package
 			}
 		}
 		
+		private function collidePlatforms():void 
+		{
+			for (var i:int = 0; i < platformArray.length; i++) 
+			{
+				var platform:FlxSprite = platformArray[i];
+				FlxG.collide(platform, player);
+				
+				if (FlxG.overlap(lightBeamPlayer, platform) && FlxG.keys.justPressed("E")){
+					
+					var plant1:Plant = new Plant(); 
+					
+					if (player.facing == FlxObject.RIGHT) 
+					{
+						plant1.x = player.x + player.width + lightBeamPlayer.width;
+						plant1.y = player.y - player.height / 2.0;
+					}
+					else 
+					{
+						plant1.x = player.x - lightBeamPlayer.width;
+						plant1.y = player.y - player.height / 2.0;
+					}
+					
+					add(plant1);				
+					plant1.grow();
+					plant1.isGrown = true;
+					plantArray.push(plant1);
+					
+					var lightPlant:Light = new Light(plant1.x - 15, plant1.y, darkness); 
+					lightPlant.scale.x = 2; 
+					lightPlant.scale.y = 4;
+					add(lightPlant);
+					
+				}
+			}
+			
+		}
 		
 		private function treeClimb():void
 		{
 			for (var i:int = 0; i < plantArray.length; i++)
 			{
 				var plant:Plant = plantArray[i]; 
-				if (FlxG.overlap(player, plant) && plant.isGrown)
+				if (plant.isGrown && FlxG.overlap(player, plant))
 				{
 					if ((FlxG.keys.UP ||  FlxG.keys.W))
 					{
-						player.velocity.y = -100;
-						player.acceleration.y = 0;
+						if (player.y + player.height <= plant.y) {
+							player.velocity.y = -300; //hack to allowing jumping on plants
+						} 
+						else 
+						{
+							player.velocity.y = -100;
+							player.acceleration.y = 0;
+						}
+
 					} else if ((FlxG.keys.DOWN ||  FlxG.keys.S))
 					{
 						player.velocity.y = 100;
@@ -277,7 +328,7 @@ package
 			if (!pause.showing)
 			{
 				super.update();
-				FlxG.collide(level, player);
+				collidePlatforms(); 
 				collideBulbs();
 				checkLightBeam(); 
 				treeClimb()
@@ -325,33 +376,7 @@ package
 			{
 				lightBeamPlayer.visible = false;
 			}
-			
-			if (FlxG.collide(lightBeamPlayer, level) && FlxG.keys.justPressed("E")){
-				
-				var plant1:Plant = new Plant(); 
-				
-				if (player.facing == FlxObject.RIGHT) 
-				{
-					plant1.x = player.x + player.width + lightBeamPlayer.width;
-					plant1.y = player.y - player.height / 2.0;
-				}
-				else 
-				{
-					plant1.x = player.x - lightBeamPlayer.width;
-					plant1.y = player.y - player.height / 2.0;
-				}
-				
-				add(plant1);				
-				plant1.grow();
-				plant1.isGrown = true;
-				plantArray.push(plant1);
-				
-				var lightPlant:Light = new Light(plant1.x - 15, plant1.y, darkness); 
-				lightPlant.scale.x = 2; 
-				lightPlant.scale.y = 4;
-				add(lightPlant);
-				
-			}
+		
 		}
 		
 		override public function draw():void {
