@@ -13,6 +13,7 @@ package
 		[Embed(source = '../assets/platform2.png')] public static var ImgPlatform2:Class;
 		[Embed(source = '../assets/map.png')] public static var ImgBackGround:Class;
 		[Embed(source = '../assets/intro.png')] public static var ImgStartScreen:Class;
+		[Embed(source = '../assets/end.png')] public static var ImgEndScreen:Class;
 		
 		
 		//music and sound effects
