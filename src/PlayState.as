@@ -216,7 +216,7 @@ package
 		{
 			for (var i:int = 0; i < bulbArray.length; i++){
 				var bulb:Bulb = bulbArray[i];
-				if (FlxG.collide(bulb, player)){
+				if (FlxG.overlap(bulb, player)){
 					FlxG.play(Sources.BulbPickupSoundEffect, 0.25);
 					// collect it!
 					bulb.exists = false;
@@ -266,6 +266,7 @@ package
 				checkLightBeam(); 
 				treeClimb()
 				updateBattery();
+				
 				if (FlxG.keys.COMMA)
 				{
 					FlxG.switchState(new EndScreen());
@@ -307,6 +308,12 @@ package
 			else 
 			{
 				lightBeamPlayer.visible = false;
+			}
+			
+			if (FlxG.overlap(lightBeamPlayer, plant)){
+				lightBeamPlayer.color = 0xff0000;
+			} else {
+				lightBeamPlayer.color = 0x0000ff;
 			}
 		}
 		
