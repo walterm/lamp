@@ -201,7 +201,7 @@ package
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
-				bulb.x = Math.floor(Math.random()*(FlxG.width - 50) + 100);
+				bulb.x = Math.floor(Math.random()*(FlxG.width - 100) + 100);
 				bulb.y = Math.floor(Math.random()*(FlxG.height - 150) + 40);
 				bulbArray.push(bulb);
 				add(bulb);
