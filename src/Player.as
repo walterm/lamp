@@ -74,27 +74,22 @@ package
 					play('idle');
 				} else 
 				{
-					
-					
 					play('walk');
-					
 				}
+				
 				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
-					velocity.y = -300;
-
 					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
-
-
 					velocity.y = yVelocity;
-
-				} else
-			{
-				play('jump');
+				}
+				else
+				{
+					play('jump');
+				}
 			}
+				
 			if (right)
 			{
-
 				velocity.x = 75;
 				facing = RIGHT; 
 				if (x > FlxG.width - width) 
@@ -124,4 +119,4 @@ package
 			super.update();
 	
 		}
-	}}}
+	}}
