@@ -22,7 +22,12 @@ package
 		public function Player():void
 		{ 
 			loadGraphic(Sources.ImgPlayer, true, true, 80, 80);
-					
+			
+			//                        var lightbeam:FlxSprite;
+			//                        lightbeam = new FlxSprite;
+			//                        lightbeam.loadGraphic(Sources.ImgLightBeam, true, true, 80, 80); 
+			//                        FlxG.state.add(lightbeam); 
+			
 			//set animations here
 			addAnimation("idle"/*name of animation*/, [0]/*used frames*/);
 			addAnimation("walk", [0, 1, 2, 3, 4, 5, 6, 7, 8], 10/*frames per second*/);
@@ -63,24 +68,22 @@ package
 			
 			if (touching & DOWN)
 			{
-				
-				if (!left && !right) 
-				{
-					play('idle');
-				} else 
+				if ((left || right) && !(FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W")))
 				{
 					play('walk');
-				}
-				
-				if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
+					walk.play();
+				} else if (FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W"))
 				{
-					FlxG.play(Sources.LampJumpSoundEffect, 0.25);
+					var jump:FlxSound = FlxG.play(Sources.LampJumpSoundEffect, 0.25);
 					velocity.y = yVelocity;
 				}
-				else
-				{
-					play('jump');
+				else {
+					play('idle');
+					walk.stop();
 				}
+			} else
+			{
+				play('jump');
 			}
 			
 			if (right)
@@ -91,17 +94,7 @@ package
 				{
 					velocity.x = 0; 
 				}
-			} 
-			
-			if (left || right)
-			{
-				walk.play();
-			} else 
-			{
-				walk.stop();
-			}
-			
-			if (left)
+			} else if (left)
 			{
 				velocity.x = -75;
 				facing = LEFT; 
@@ -109,9 +102,10 @@ package
 				{
 					velocity.x = 0; 
 				}
-			} 
+			}
 			
 			super.update();
 			
 		}
-	}}
+	}
+}

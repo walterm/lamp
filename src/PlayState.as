@@ -235,7 +235,8 @@ package
 			for (var i:int = 0; i < plantArray.length; i++)
 			{
 				var plant:Plant = plantArray[i]; 
-				if (plant.isGrown && FlxG.overlap(player, plant)){
+				if (FlxG.overlap(player, plant) && plant.isGrown)
+				{
 					if ((FlxG.keys.UP ||  FlxG.keys.W))
 					{
 						player.velocity.y = -100;
@@ -245,7 +246,7 @@ package
 						player.velocity.y = 100;
 						player.acceleration.y = 0;        
 					} else {
-						player.velocity.y = 0
+						player.velocity.y = 0;
 						player.acceleration.y = 0;
 					}
 				} 
@@ -334,6 +335,7 @@ package
 				
 				add(plant1);				
 				plant1.grow();
+				plant1.isGrown = true;
 				plantArray.push(plant1);
 				
 				var lightPlant:Light = new Light(plant1.x - 15, plant1.y, darkness); 
