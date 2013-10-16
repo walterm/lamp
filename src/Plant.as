@@ -17,23 +17,6 @@ package
 			this.centerOffsets();
 		}
 		
-		override public function update():void
-		{
-			testgrow(); 
-			
-			super.update();
-		}
-		
-		private function testgrow():void 
-		{
-			if (FlxG.keys.B)
-			{
-				play('grow');
-				this.height = 100;
-				isGrown = true;
-			}
-		}
-		
 		public function grow():void
 		{
 			if (!isGrown){

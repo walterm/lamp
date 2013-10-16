@@ -16,17 +16,17 @@ package
 		private var camY:int = 120;
 		private var jumpHeight:int = -200;
 		private var movespeed:int = 150;
-		private var yVelocity:int = -400;
+		private var yVelocity:int = -300;
 		
 		
 		public function Player():void
 		{ 
 			loadGraphic(Sources.ImgPlayer, true, true, 80, 80);
 			
-//			var lightbeam:FlxSprite;
-//			lightbeam = new FlxSprite;
-//			lightbeam.loadGraphic(Sources.ImgLightBeam, true, true, 80, 80); 
-//			FlxG.state.add(lightbeam); 
+			//                        var lightbeam:FlxSprite;
+			//                        lightbeam = new FlxSprite;
+			//                        lightbeam.loadGraphic(Sources.ImgLightBeam, true, true, 80, 80); 
+			//                        FlxG.state.add(lightbeam); 
 			
 			//set animations here
 			addAnimation("idle"/*name of animation*/, [0]/*used frames*/);
@@ -68,7 +68,7 @@ package
 			
 			if (touching & DOWN)
 			{
-				if (left || right)
+				if ((left || right) && !(FlxG.keys.justPressed("UP") || FlxG.keys.justPressed("W")))
 				{
 					play('walk');
 					walk.play();
@@ -85,7 +85,7 @@ package
 			{
 				play('jump');
 			}
-							
+			
 			if (right)
 			{
 				velocity.x = 75;
@@ -105,7 +105,7 @@ package
 			}
 			
 			super.update();
-	
+			
 		}
 	}
 }

@@ -15,16 +15,14 @@ package
 			this.blend = "screen";
 		}
 		
-		override public function draw():void {
+		override public function draw():void { 
 			var screenXY:FlxPoint = getScreenXY();
 			
 			darkness.stamp(this,
 				screenXY.x - this.width / 2,
 				screenXY.y - this.height / 2);
-		}
-		
-		override public function update():void {
 			
+			super.draw();
 		}
 		
 		public function follow(newX:Number, newY:Number):void
@@ -33,25 +31,5 @@ package
 			y = newY; 
 		}
 		
-		private function movement():void
-		{
-			
-			if (FlxG.keys.SPACE) {
-				if (touching & DOWN) {
-					velocity.y = 20;
-					//add jump animation and jump sound here
-					
-				} 
-			} 
-			if (FlxG.keys.A || FlxG.keys.LEFT){
-				velocity.x = -150
-				//add walk animation here
-				
-			} else if (FlxG.keys.D || FlxG.keys.RIGHT){
-				velocity.x = 150
-				//add walk animation here
-			}
-			
-		}
 	}
 }
