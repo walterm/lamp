@@ -18,6 +18,11 @@ package
 			t.size = 10;
 			t.alignment = "left";
 			add(t);
+			t = new FlxText(60, FlxG.height-30, FlxG.width, "credits: stephanie gu, ethan sherbondy, jack li, walter menendez, lili sun")
+			
+			t.size = 10;
+			t.alignment = "left";
+			add(t);
 		}
 		
 		override public function update():void
