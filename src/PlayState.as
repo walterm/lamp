@@ -1,12 +1,14 @@
 package
 {
+	import org.flixel.FlxBackdrop;
 	import org.flixel.FlxG;
 	import org.flixel.FlxObject;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
 	import org.flixel.FlxTilemap; 
-	
+	import org.flixel.FlxTilemap;
+
 	public class PlayState extends FlxState
 	{
 		public var level:FlxTilemap;
@@ -35,7 +37,8 @@ package
 		private var battery:Battery;
 		private var batteryText:FlxText;
 		private var debug:Boolean = false;
-		
+		private var background:FlxBackdrop;
+
 		private function pushPlatform(data:Array, platformLength:int):Array
 		{
 			for(var i:int = 0; i < platformLength; i++){
@@ -59,7 +62,8 @@ package
 		
 		override public function create():void
 		{
-			
+			background = new FlxBackdrop(Sources.ImgBackGround, 0, 0, false, true); 
+			add(background);
 			FlxG.playMusic(Sources.BackgroundMusic, 1);
 			
 			//Sets the background to gray.
@@ -222,6 +226,10 @@ package
 					bulb.exists = false;
 					bulbLightArray[i].exists = false;
 					bulbsCollected += 1;
+					if (bulbsCollected == BULB_COUNT)
+					{
+						FlxG.switchState(new EndScreen());
+					}
 					// recover battery
 					battery.recover(); 
 					bulbText.text = bulbsCollected + " Bulb" + (bulbsCollected != 1 ? "s" : "");

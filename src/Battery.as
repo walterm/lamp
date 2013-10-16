@@ -9,7 +9,7 @@ package {
 		// once this drops to 0, you die		
 		public var batteryLife:Number = 100;
 		public const bulbBatteryRecovery:Number = 20;
-		public const batteryDrain:Number = 0.05; // amount drained every update.
+		public const batteryDrain:Number = 0.1; // amount drained every update.
 		
 		public function Battery():void {
 			this.x = 10;

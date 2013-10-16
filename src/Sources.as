@@ -11,6 +11,8 @@ package
 		[Embed(source = '../assets/batterysheet.png')] public static var ImgBattery:Class;
 		[Embed(source = '../assets/platform1.png')] public static var ImgPlatform1:Class;
 		[Embed(source = '../assets/platform2.png')] public static var ImgPlatform2:Class;
+		[Embed(source = '../assets/map.png')] public static var ImgBackGround:Class;
+		[Embed(source = '../assets/intro.png')] public static var ImgStartScreen:Class;
 		
 		
 		//music and sound effects
