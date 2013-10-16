@@ -166,6 +166,10 @@ package
 			if (!debug) 
 			{
 				add(darkness);
+			} else {
+				// debugging
+				FlxG.debug = true;
+				FlxG.visualDebug = true;
 			}
 			
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
@@ -194,13 +198,6 @@ package
 				bulbLightArray.push(bulbLight);
 				add(bulbLight);
 			}
-			
-			if (!debug) 
-			{
-				add(darkness);
-			}
-						
-			pause = new Pause();
 		}
 		
 		private function createBattery():void
@@ -235,17 +232,19 @@ package
 
 		private function treeClimb():void
 		{
-			if (FlxG.overlap(player, plant) && (FlxG.keys.UP ||  FlxG.keys.W)) 
-			{
-				player.velocity.y = -100;
-				player.acceleration.y = 0;
-			} else if (FlxG.overlap(player, plant) && (FlxG.keys.DOWN ||  FlxG.keys.S))
-			{
-				player.velocity.y = 100;
-				player.acceleration.y = 0;	
-			} else if (FlxG.overlap(player, plant)) {
-				player.velocity.y = 0
-				player.acceleration.y = 0;
+			if (plant.isGrown && FlxG.overlap(player, plant)){
+				if ((FlxG.keys.UP ||  FlxG.keys.W))
+				{
+					player.velocity.y = -100;
+					player.acceleration.y = 0;
+				} else if ((FlxG.keys.DOWN ||  FlxG.keys.S))
+				{
+					player.velocity.y = 100;
+					player.acceleration.y = 0;	
+				} else {
+					player.velocity.y = 0
+					player.acceleration.y = 0;
+				}
 			} else {
 				player.acceleration.y = 600;
 			}
