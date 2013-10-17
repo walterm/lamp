@@ -15,7 +15,7 @@ package
 		[Embed(source = '../assets/intro.png')] public static var ImgStartScreen:Class;
 		[Embed(source = '../assets/end.png')] public static var ImgEndScreen:Class;
 		[Embed(source = '../assets/platform2s.png')] public static var ImgPlatform:Class;
-		
+		[Embed(source = '../assets/platform2.png')] public static var ImgMap:Class;
 		
 		//music and sound effects
 		[Embed(source = '../assets/backgroundmusic.mp3')] public static var BackgroundMusic:Class;
@@ -23,6 +23,9 @@ package
 		[Embed(source = '../assets/lampwalksfx.mp3')] public static var LampWalkSoundEffect:Class;
 		[Embed(source = '../assets/lampJumpSfx.mp3')] public static var LampJumpSoundEffect:Class;
 		[Embed(source = '../assets/lightbeamonsfx.mp3')] public static var LightBeamSoundEffect:Class;
+		
+		//text
+		[Embed(source = '../assets/map.txt', mimeType = "application/octet-stream")] public static var TxtMap:Class;
 
 	}
 }

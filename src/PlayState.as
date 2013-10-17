@@ -6,7 +6,6 @@ package
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxText;
-	import org.flixel.FlxTilemap; 
 	import org.flixel.FlxTilemap;
 
 	public class PlayState extends FlxState
@@ -38,39 +37,18 @@ package
 		private var batteryText:FlxText;
 		
 		private var platformArray:Array; 
-		private var platform1:FlxSprite; 
-		private var platform2:FlxSprite; 
+		private var map:FlxTilemap; 
 		
-		private var gapWidth:int = 300;
+		private var gapWidth:int = 450;
 		private var jumpHeight:int = 150;
-		private var gapMultFactor:Number = 1.5;
 		
-		private var debug:Boolean = false;
+		private var debug:Boolean = true;
 		private var background:FlxBackdrop;
 
-		private function pushPlatform(data:Array, platformLength:int):Array
-		{
-			for(var i:int = 0; i < platformLength; i++){
-				data.push(1);
-			};
-			for(i = 0; i < platformLength; i++){
-				data.push(0);
-			};
-			return data;
-		}
-		
-		private function addBlankRow(data:Array):Array
-		{
-			var rowData:Array = new Array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
-			for(var i:int = 0; i < rowData.length; i++){
-				data.push(rowData);
-			}
-			return data;
-		}
-		
 		override public function create():void
 		{
+			
+			FlxG.camera.setBounds(0,0, 1000, 1000 ,true);
 			
 			background = new FlxBackdrop(Sources.ImgBackGround, 0, 0, false, true); 
 			add(background);
@@ -78,21 +56,7 @@ package
 			
 			//Sets the background to gray.
 			FlxG.bgColor = 0xffaaaaaa;
-			
-			//Top row
-			var platformData:Array = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-			
-                   
-			var totalCells:int = rows * columns;
-			for(var n:int = 0; n < totalCells - columns * 3; n++){
-				platformData.push(0);
-			}
-			
-			for(n = platformData.length; n < totalCells; n++){
-				platformData.push(1);
-			}
-			
+
 			player = new Player(); 
 			player.x = 0; 
 			player.y = 100; 
@@ -120,7 +84,11 @@ package
 			add(lightBeamPlayer);
 			lightBeamPlayer.visible = false; 
 			
+			//generating platforms placed randomly
 			createPlatforms(10);
+			map = new FlxTilemap();
+			map.loadMap(new Sources.TxtMap, Sources.ImgMap, 16, 16);
+			add(map);
 			
 			// bulb stuff
 			createBulbs();
@@ -132,12 +100,14 @@ package
 			} else {
 				// debugging
 				//FlxG.debug = true;
-				//FlxG.visualDebug = true;
+				FlxG.visualDebug = true;
 			}
 			
 			bulbText = new FlxText(FlxG.width - 120, 20, 100, "0 Bulbs");
 			bulbText.size = 20;
 			bulbText.alignment = "right";
+			bulbText.scrollFactor.x = 0; 
+			bulbText.scrollFactor.y = 0;
 			add(bulbText);
 			
 			createBattery();        
@@ -149,45 +119,27 @@ package
 		{
 			platformArray = new Array();
 			var x:int = 0;
-			var y:int = 0;
+			var y:int = FlxG.height;
 			var gapWidthCurr:int = 200; 
 			var jumpHeightCurr:int = 0; 
 			
 			for (var i:int = 0; i < numPlatforms; i++) 
 			{
-				gapWidthCurr = randomNum(gapWidth-80);  
-				jumpHeightCurr = randomNum(jumpHeight);
-				if (x == 80)
-				{
-					x += -100; 
-				}
-				else 
-				{
-					x += 100;
-				}
-				y += jumpHeightCurr; 
 				var platform:FlxSprite = new FlxSprite(x, y, Sources.ImgPlatform); 
 				platform.immovable = true; 
 				add(platform); 
 				platformArray.push(platform);
+				
+				gapWidthCurr = randomNum(100, gapWidth);  
+				jumpHeightCurr = randomNum(player.height + platform.height + 5, jumpHeight);
+				x = gapWidthCurr;
+				y -= jumpHeightCurr; 
 			}
-			
-			platform1 = new FlxSprite(0, FlxG.height, Sources.ImgPlatform);
-			platform1.y = FlxG.height - platform1.height;
-			platform1.immovable = true;
-			add(platform1);
-			platformArray.push(platform1); 
-			
-			platform2 = new FlxSprite(platform1.x + platform1.width + gapWidth, FlxG.height-jumpHeight, Sources.ImgPlatform);
-			platform2.immovable = true;
-			add(platform2);
-			platformArray.push(platform2); 
 		}
 		
-		private function randomNum(interval:Number):int
+		private function randomNum(min:int, max:int):int
 		{
-			var rand:Number = Math.random() * interval + 85;
-//			return base + multiplier * rand * coinFlip ;
+			var rand:Number = Math.random() * (max-min) + min;
 			return Math.floor(rand);
 		}
 
@@ -195,14 +147,11 @@ package
 		{                                                
 			bulbArray = new Array();
 			bulbLightArray = new Array(); 
-			var gapWidthCurr:int = 200; 
-			var jumpHeightCurr:int = 0; 
-			
 			for (var i:int = 0; i < BULB_COUNT; i++){
 				var bulb:Bulb = new Bulb();
 				// should not hard code width
-				bulb.x = Math.floor(Math.random()*(FlxG.width - 50) + 100);
-				bulb.y = Math.floor(Math.random()*(FlxG.height - 150) + 40);
+				bulb.x = randomNum(80, FlxG.width-20);
+				bulb.y = randomNum(0, FlxG.height-100);
 				bulbArray.push(bulb);
 				add(bulb);
 				
@@ -218,9 +167,13 @@ package
 			batteryText = new FlxText(75, 20, 90, "100%");
 			batteryText.size = 20;
 			batteryText.alignment = "left";
+			batteryText.scrollFactor.x = 0; 
+			batteryText.scrollFactor.y = 0;
 			add(batteryText);
 			
 			battery = new Battery();
+			battery.scrollFactor.x = 0; 
+			battery.scrollFactor.y = 0;
 			add(battery);
 		}
 		
@@ -252,19 +205,19 @@ package
 				var platform:FlxSprite = platformArray[i];
 				FlxG.collide(platform, player);
 				
-				if (FlxG.overlap(lightBeamPlayer, platform) && FlxG.keys.justPressed("E")){
+				if ((FlxG.overlap(lightBeamPlayer, platform)) && FlxG.keys.justPressed("E")){
 					
 					var plant1:Plant = new Plant(); 
 					
 					if (player.facing == FlxObject.RIGHT) 
 					{
-						plant1.x = player.x + player.width + lightBeamPlayer.width;
-						plant1.y = player.y - player.height / 2.0;
+						plant1.x = player.x + player.width + lightBeamPlayer.width/2.0;
+						plant1.y = player.y - player.height / 2.0 + 8;
 					}
 					else 
 					{
 						plant1.x = player.x - lightBeamPlayer.width;
-						plant1.y = player.y - player.height / 2.0;
+						plant1.y = player.y - player.height / 2.0 + 8;
 					}
 					
 					add(plant1);				
@@ -327,7 +280,9 @@ package
 		{
 			if (!pause.showing)
 			{
+				
 				super.update();
+				FlxG.collide(player, map);
 				collidePlatforms(); 
 				collideBulbs();
 				checkLightBeam(); 
@@ -358,7 +313,7 @@ package
 			if (player.facing == FlxObject.LEFT) 
 			{
 				lightBeamPlayer.angle = 45; 
-				lightBeamPlayer.follow(player.x, player.getMidpoint().y);
+				lightBeamPlayer.follow(player.x-player.width/2.0, player.getMidpoint().y);
 			}
 			else 
 			{

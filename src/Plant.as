@@ -11,7 +11,7 @@ package
 		
 		public function Plant():void
 		{ 
-			loadGraphic(Sources.ImgPlant, true, true, 80, 120);
+			loadGraphic(Sources.ImgPlant, true, true, 80, 111);
 			addAnimation('grow', [0, 1, 2, 3, 4, 5, 6], 10, false);
 			this.width = 40;
 			this.centerOffsets();
